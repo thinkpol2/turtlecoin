@@ -83,9 +83,9 @@ public:
 
   virtual WalletTransactionWithTransfers getTransaction(const Crypto::Hash& transactionHash) const override;
   virtual std::vector<TransactionsInBlockInfo> getTransactions(const Crypto::Hash& blockHash, size_t count) const override;
-  virtual std::vector<TransactionsInBlockInfo> getTransactions(uint32_t blockIndex, size_t count) const override;
-  virtual std::vector<Crypto::Hash> getBlockHashes(uint32_t blockIndex, size_t count) const override;
-  virtual uint32_t getBlockCount() const override;
+  virtual std::vector<TransactionsInBlockInfo> getTransactions(uint64_t blockIndex, size_t count) const override;
+  virtual std::vector<Crypto::Hash> getBlockHashes(uint64_t blockIndex, size_t count) const override;
+  virtual uint64_t getBlockCount() const override;
   virtual std::vector<WalletTransactionWithTransfers> getUnconfirmedTransactions() const override;
   virtual std::vector<size_t> getDelayedTransactionIds() const override;
 
@@ -191,7 +191,7 @@ protected:
 
   typedef std::unordered_map<std::string, AddressAmounts> TransfersMap;
 
-  virtual void onError(ITransfersSubscription* object, uint32_t height, std::error_code ec) override;
+  virtual void onError(ITransfersSubscription* object, uint64_t height, std::error_code ec) override;
 
   virtual void onTransactionUpdated(ITransfersSubscription* object, const Crypto::Hash& transactionHash) override;
   virtual void onTransactionUpdated(const Crypto::PublicKey& viewPublicKey, const Crypto::Hash& transactionHash,
@@ -201,17 +201,17 @@ protected:
   virtual void onTransactionDeleted(ITransfersSubscription* object, const Crypto::Hash& transactionHash) override;
   void transactionDeleted(ITransfersSubscription* object, const Crypto::Hash& transactionHash);
 
-  virtual void synchronizationProgressUpdated(uint32_t processedBlockCount, uint32_t totalBlockCount) override;
+  virtual void synchronizationProgressUpdated(uint64_t processedBlockCount, uint64_t totalBlockCount) override;
   virtual void synchronizationCompleted(std::error_code result) override;
 
-  void onSynchronizationProgressUpdated(uint32_t processedBlockCount, uint32_t totalBlockCount);
+  void onSynchronizationProgressUpdated(uint64_t processedBlockCount, uint64_t totalBlockCount);
   void onSynchronizationCompleted();
 
   virtual void onBlocksAdded(const Crypto::PublicKey& viewPublicKey, const std::vector<Crypto::Hash>& blockHashes) override;
   void blocksAdded(const std::vector<Crypto::Hash>& blockHashes);
 
-  virtual void onBlockchainDetach(const Crypto::PublicKey& viewPublicKey, uint32_t blockIndex) override;
-  void blocksRollback(uint32_t blockIndex);
+  virtual void onBlockchainDetach(const Crypto::PublicKey& viewPublicKey, uint64_t blockIndex) override;
+  void blocksRollback(uint64_t blockIndex);
 
   virtual void onTransactionDeleteBegin(const Crypto::PublicKey& viewPublicKey, Crypto::Hash transactionHash) override;
   void transactionDeleteBegin(Crypto::Hash transactionHash);
@@ -224,7 +224,7 @@ protected:
   std::vector<WalletOuts> pickWallets(const std::vector<std::string>& addresses) const;
 
   void updateBalance(CryptoNote::ITransfersContainer* container);
-  void unlockBalances(uint32_t height);
+  void unlockBalances(uint64_t height);
 
   const WalletRecord& getWalletRecord(const Crypto::PublicKey& key) const;
   const WalletRecord& getWalletRecord(const std::string& address) const;
@@ -302,7 +302,7 @@ protected:
   bool eraseTransfersByAddress(size_t transactionId, size_t firstTransferIdx, const std::string& address, bool eraseOutputTransfers);
   bool eraseForeignTransfers(size_t transactionId, size_t firstTransferIdx, const std::unordered_set<std::string>& knownAddresses, bool eraseOutputTransfers);
   void pushBackOutgoingTransfers(size_t txId, const std::vector<WalletTransfer>& destinations);
-  void insertUnlockTransactionJob(const Crypto::Hash& transactionHash, uint32_t blockHeight, CryptoNote::ITransfersContainer* container);
+  void insertUnlockTransactionJob(const Crypto::Hash& transactionHash, uint64_t blockHeight, CryptoNote::ITransfersContainer* container);
   void deleteUnlockTransactionJob(const Crypto::Hash& transactionHash);
   void startBlockchainSynchronizer();
   void stopBlockchainSynchronizer();
@@ -339,8 +339,8 @@ protected:
   WalletTrackingMode getTrackingMode() const;
 
   TransfersRange getTransactionTransfersRange(size_t transactionIndex) const;
-  std::vector<TransactionsInBlockInfo> getTransactionsInBlocks(uint32_t blockIndex, size_t count) const;
-  Crypto::Hash getBlockHashByIndex(uint32_t blockIndex) const;
+  std::vector<TransactionsInBlockInfo> getTransactionsInBlocks(uint64_t blockIndex, size_t count) const;
+  Crypto::Hash getBlockHashByIndex(uint64_t blockIndex) const;
 
   std::vector<WalletTransfer> getTransactionTransfers(const WalletTransaction& transaction) const;
   void filterOutTransactions(WalletTransactions& transactions, WalletTransfers& transfers, std::function<bool (const WalletTransaction&)>&& pred) const;

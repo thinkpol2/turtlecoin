@@ -279,7 +279,7 @@ void splitTX(CryptoNote::WalletGreen &wallet,
     }
 }
 
-void transfer(std::shared_ptr<WalletInfo> walletInfo, uint32_t height,
+void transfer(std::shared_ptr<WalletInfo> walletInfo, uint64_t height,
               bool sendAll, std::string nodeAddress, uint32_t nodeFee)
 {
     std::cout << InformationMsg("Note: You can type cancel at any time to "
@@ -516,7 +516,7 @@ BalanceInfo doWeHaveEnoughBalance(uint64_t amount, uint64_t fee,
 
 void doTransfer(std::string address, uint64_t amount, uint64_t fee,
                 std::string extra, std::shared_ptr<WalletInfo> walletInfo,
-                uint32_t height, bool integratedAddress, uint64_t mixin,
+                uint64_t height, bool integratedAddress, uint64_t mixin,
                 std::string nodeAddress, uint32_t nodeFee,
                 std::string originalAddress)
 {
@@ -563,7 +563,7 @@ void doTransfer(std::string address, uint64_t amount, uint64_t fee,
 }
 
 void sendTX(std::shared_ptr<WalletInfo> walletInfo, 
-            CryptoNote::TransactionParameters p, uint32_t height,
+            CryptoNote::TransactionParameters p, uint64_t height,
             bool retried, uint32_t nodeFee)
 {
     try
@@ -616,7 +616,7 @@ void sendTX(std::shared_ptr<WalletInfo> walletInfo,
 
 bool handleTransferError(const std::system_error &e,
                          bool retried,
-                         uint32_t height)
+                         uint64_t height)
 {
     if (retried)
     {

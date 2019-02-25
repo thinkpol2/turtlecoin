@@ -29,7 +29,7 @@ public:
   virtual ~MemoryBlockchainCacheFactory() override;
 
   std::unique_ptr<IBlockchainCache> createRootBlockchainCache(const Currency& currency) override;
-  std::unique_ptr<IBlockchainCache> createBlockchainCache(const Currency& currency, IBlockchainCache* parent, uint32_t startIndex = 0) override;
+  std::unique_ptr<IBlockchainCache> createBlockchainCache(const Currency& currency, IBlockchainCache* parent, uint64_t startIndex = 0) override;
 
 private:
   std::string filename;

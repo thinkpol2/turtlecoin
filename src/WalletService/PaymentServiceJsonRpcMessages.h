@@ -93,8 +93,8 @@ struct GetStatus {
   };
 
   struct Response {
-    uint32_t blockCount;
-    uint32_t knownBlockCount;
+    uint64_t blockCount;
+    uint64_t knownBlockCount;
     uint64_t localDaemonBlockCount;
     std::string lastBlockHash;
     uint32_t peerCount;
@@ -196,8 +196,8 @@ struct GetBalance {
 
 struct GetBlockHashes {
   struct Request {
-    uint32_t firstBlockIndex;
-    uint32_t blockCount;
+    uint64_t firstBlockIndex;
+    uint64_t blockCount;
 
     void serialize(CryptoNote::ISerializer& serializer);
   };
@@ -220,8 +220,8 @@ struct GetTransactionHashes {
   struct Request {
     std::vector<std::string> addresses;
     std::string blockHash;
-    uint32_t firstBlockIndex = std::numeric_limits<uint32_t>::max();
-    uint32_t blockCount;
+    uint64_t firstBlockIndex = std::numeric_limits<uint64_t>::max();
+    uint64_t blockCount;
     std::string paymentId;
 
     void serialize(CryptoNote::ISerializer& serializer);
@@ -245,7 +245,7 @@ struct TransferRpcInfo {
 struct TransactionRpcInfo {
   uint8_t state;
   std::string transactionHash;
-  uint32_t blockIndex;
+  uint64_t blockIndex;
   uint64_t timestamp;
   bool isBase;
   uint64_t unlockTime;
@@ -283,8 +283,8 @@ struct GetTransactions {
   struct Request {
     std::vector<std::string> addresses;
     std::string blockHash;
-    uint32_t firstBlockIndex = std::numeric_limits<uint32_t>::max();
-    uint32_t blockCount;
+    uint64_t firstBlockIndex = std::numeric_limits<uint64_t>::max();
+    uint64_t blockCount;
     std::string paymentId;
 
     void serialize(CryptoNote::ISerializer& serializer);

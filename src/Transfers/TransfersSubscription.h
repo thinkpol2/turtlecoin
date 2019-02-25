@@ -30,9 +30,9 @@ public:
   TransfersSubscription(const CryptoNote::Currency& currency, std::shared_ptr<Logging::ILogger> logger, const AccountSubscription& sub);
 
   SynchronizationStart getSyncStart();
-  void onBlockchainDetach(uint32_t height);
-  void onError(const std::error_code& ec, uint32_t height);
-  bool advanceHeight(uint32_t height);
+  void onBlockchainDetach(uint64_t height);
+  void onError(const std::error_code& ec, uint64_t height);
+  bool advanceHeight(uint64_t height);
   const AccountKeys& getKeys() const;
   bool addTransaction(const TransactionBlockInfo& blockInfo, const ITransactionReader& tx,
                       const std::vector<TransactionOutputInformationIn>& transfers);

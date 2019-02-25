@@ -57,14 +57,14 @@ public:
   virtual void load(std::istream& in) override;
 
   // INodeObserver
-  virtual void localBlockchainUpdated(uint32_t height) override;
-  virtual void lastKnownBlockHeightUpdated(uint32_t height) override;
+  virtual void localBlockchainUpdated(uint64_t height) override;
+  virtual void lastKnownBlockHeightUpdated(uint64_t height) override;
   virtual void poolChanged() override;
 
 private:
 
   struct GetBlocksResponse {
-    uint32_t startHeight;
+    uint64_t startHeight;
     std::vector<BlockShortEntry> newBlocks;
   };
 

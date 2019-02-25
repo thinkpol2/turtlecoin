@@ -21,10 +21,10 @@ public:
   virtual bool shutdown() override { return true; }
 
   virtual size_t getPeerCount() const override { return 0; }
-  virtual uint32_t getLastLocalBlockHeight() const override { return 0; }
-  virtual uint32_t getLastKnownBlockHeight() const override { return 0; }
-  virtual uint32_t getLocalBlockCount() const override { return 0; }
-  virtual uint32_t getKnownBlockCount() const override { return 0; }
+  virtual uint64_t getLastLocalBlockHeight() const override { return 0; }
+  virtual uint64_t getLastKnownBlockHeight() const override { return 0; }
+  virtual uint64_t getLocalBlockCount() const override { return 0; }
+  virtual uint64_t getKnownBlockCount() const override { return 0; }
   virtual uint64_t getNodeHeight() const override { return 0; }
 
   virtual void getFeeInfo() override { }
@@ -66,7 +66,7 @@ public:
   };
 
   virtual void queryBlocks(std::vector<Crypto::Hash>&& knownBlockIds, uint64_t timestamp, std::vector<CryptoNote::BlockShortEntry>& newBlocks,
-    uint32_t& startHeight, const Callback& callback) override {
+    uint64_t& startHeight, const Callback& callback) override {
     startHeight = 0;
     callback(std::error_code());
   };
@@ -82,13 +82,13 @@ public:
     callback(std::error_code());
   }
 
-  virtual void getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<CryptoNote::BlockDetails>>& blocks,
+  virtual void getBlocks(const std::vector<uint64_t>& blockHeights, std::vector<std::vector<CryptoNote::BlockDetails>>& blocks,
     const Callback& callback) override { }
 
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<CryptoNote::BlockDetails>& blocks,
     const Callback& callback) override { }
 
-  virtual void getBlock(const uint32_t blockHeight, CryptoNote::BlockDetails &block,
+  virtual void getBlock(const uint64_t blockHeight, CryptoNote::BlockDetails &block,
     const Callback& callback) override { }
 
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<CryptoNote::TransactionDetails>& transactions,

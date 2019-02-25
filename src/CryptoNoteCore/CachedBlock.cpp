@@ -150,7 +150,7 @@ const BinaryArray& CachedBlock::getParentBlockHashingBinaryArray(bool headerOnly
   }
 }
 
-uint32_t CachedBlock::getBlockIndex() const {
+uint64_t CachedBlock::getBlockIndex() const {
   if (!blockIndex.is_initialized()) {
     if (block.baseTransaction.inputs.size() != 1) {
       blockIndex = 0;

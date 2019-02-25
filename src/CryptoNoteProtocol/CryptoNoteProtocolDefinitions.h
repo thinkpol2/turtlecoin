@@ -32,7 +32,7 @@ namespace CryptoNote
   struct NOTIFY_NEW_BLOCK_request
   {
     RawBlockLegacy block;
-    uint32_t current_blockchain_height;
+    uint64_t current_blockchain_height;
     uint32_t hop;
   };
 
@@ -81,7 +81,7 @@ namespace CryptoNote
     std::vector<std::string> txs;
     std::vector<RawBlockLegacy> blocks;
     std::vector<Crypto::Hash> missed_ids;
-    uint32_t current_blockchain_height;
+    uint64_t current_blockchain_height;
   };
 
   struct NOTIFY_RESPONSE_GET_OBJECTS
@@ -106,8 +106,8 @@ namespace CryptoNote
 
   struct NOTIFY_RESPONSE_CHAIN_ENTRY_request
   {
-    uint32_t start_height;
-    uint32_t total_height;
+    uint64_t start_height;
+    uint64_t total_height;
     std::vector<Crypto::Hash> m_block_ids;
 
     void serialize(ISerializer& s) {
@@ -144,7 +144,7 @@ namespace CryptoNote
   /************************************************************************/
   struct NOTIFY_NEW_LITE_BLOCK_request {
     BinaryArray blockTemplate;
-    uint32_t current_blockchain_height;
+    uint64_t current_blockchain_height;
     uint32_t hop;
   };
 
@@ -155,7 +155,7 @@ namespace CryptoNote
 
   struct NOTIFY_MISSING_TXS_request {
     Crypto::Hash blockHash;
-    uint32_t current_blockchain_height;
+    uint64_t current_blockchain_height;
     std::vector<Crypto::Hash> missing_txs;
   };
 

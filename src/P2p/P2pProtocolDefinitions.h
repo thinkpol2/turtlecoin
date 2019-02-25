@@ -64,7 +64,7 @@ namespace CryptoNote
 
   struct CORE_SYNC_DATA
   {
-    uint32_t current_height;
+    uint64_t current_height;
     Crypto::Hash top_id;
 
     void serialize(ISerializer& s) {

@@ -29,7 +29,7 @@
 namespace CryptoNote {
 
 struct BlockchainInterval {
-  uint32_t startHeight;
+  uint64_t startHeight;
   std::vector<Crypto::Hash> blocks;
 };
 

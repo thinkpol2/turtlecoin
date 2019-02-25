@@ -97,15 +97,15 @@ auto BlockchainMessage::getChainSwitch() const -> const ChainSwitch & {
   return *chainSwitch;
 }
 
-BlockchainMessage makeChainSwitchMessage(uint32_t index, std::vector<Crypto::Hash>&& hashes) {
+BlockchainMessage makeChainSwitchMessage(uint64_t index, std::vector<Crypto::Hash>&& hashes) {
   return BlockchainMessage{Messages::ChainSwitch{index, std::move(hashes)}};
 }
 
-BlockchainMessage makeNewAlternativeBlockMessage(uint32_t index, const Crypto::Hash& hash) {
+BlockchainMessage makeNewAlternativeBlockMessage(uint64_t index, const Crypto::Hash& hash) {
   return BlockchainMessage{Messages::NewAlternativeBlock{index, std::move(hash)}};
 }
 
-BlockchainMessage makeNewBlockMessage(uint32_t index, const Crypto::Hash& hash) {
+BlockchainMessage makeNewBlockMessage(uint64_t index, const Crypto::Hash& hash) {
   return BlockchainMessage{Messages::NewBlock{index, std::move(hash)}};
 }
 

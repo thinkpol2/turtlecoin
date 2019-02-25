@@ -240,7 +240,7 @@ void CryptoNoteProtocolHandler::log_connections() {
   logger(INFO) << "Connections: " << ENDL << ss.str();
 }
 
-uint32_t CryptoNoteProtocolHandler::get_current_blockchain_height() {
+uint64_t CryptoNoteProtocolHandler::get_current_blockchain_height() {
   return m_core.getTopBlockIndex() + 1;
 }
 
@@ -804,7 +804,7 @@ int CryptoNoteProtocolHandler::handle_response_chain_entry(int command, NOTIFY_R
   }
 
   context.m_remote_blockchain_height = arg.total_height;
-  context.m_last_response_height = arg.start_height + static_cast<uint32_t>(arg.m_block_ids.size()) - 1;
+  context.m_last_response_height = arg.start_height + static_cast<uint64_t>(arg.m_block_ids.size()) - 1;
 
   if (context.m_last_response_height > context.m_remote_blockchain_height) {
     logger(Logging::ERROR)
@@ -949,12 +949,12 @@ void CryptoNoteProtocolHandler::requestMissingPoolTransactions(const CryptoNoteC
   }
 }
 
-void CryptoNoteProtocolHandler::updateObservedHeight(uint32_t peerHeight, const CryptoNoteConnectionContext& context) {
+void CryptoNoteProtocolHandler::updateObservedHeight(uint64_t peerHeight, const CryptoNoteConnectionContext& context) {
   bool updated = false;
   {
     std::lock_guard<std::mutex> lock(m_observedHeightMutex);
 
-    uint32_t height = m_observedHeight;
+    uint64_t height = m_observedHeight;
     if (context.m_remote_blockchain_height != 0 && context.m_last_response_height <= context.m_remote_blockchain_height - 1) {
       m_observedHeight = context.m_remote_blockchain_height - 1;
       if (m_observedHeight != height) {
@@ -991,7 +991,7 @@ void CryptoNoteProtocolHandler::updateObservedHeight(uint32_t peerHeight, const 
 
 void CryptoNoteProtocolHandler::recalculateMaxObservedHeight(const CryptoNoteConnectionContext& context) {
   //should be locked outside
-  uint32_t peerHeight = 0;
+  uint64_t peerHeight = 0;
   m_p2p->for_each_connection([&peerHeight, &context](const CryptoNoteConnectionContext& ctx, uint64_t peerId) {
     if (ctx.m_connection_id != context.m_connection_id) {
       peerHeight = std::max(peerHeight, ctx.m_remote_blockchain_height);
@@ -1004,12 +1004,12 @@ void CryptoNoteProtocolHandler::recalculateMaxObservedHeight(const CryptoNoteCon
     }
 }
 
-uint32_t CryptoNoteProtocolHandler::getObservedHeight() const {
+uint64_t CryptoNoteProtocolHandler::getObservedHeight() const {
   std::lock_guard<std::mutex> lock(m_observedHeightMutex);
   return m_observedHeight;
 };
 
-uint32_t CryptoNoteProtocolHandler::getBlockchainHeight() const {
+uint64_t CryptoNoteProtocolHandler::getBlockchainHeight() const {
   std::lock_guard<std::mutex> lock(m_blockchainHeightMutex);
   return m_blockchainHeight;
 };

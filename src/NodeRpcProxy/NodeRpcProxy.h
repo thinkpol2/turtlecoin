@@ -49,10 +49,10 @@ public:
   virtual bool shutdown() override;
 
   virtual size_t getPeerCount() const override;
-  virtual uint32_t getLastLocalBlockHeight() const override;
-  virtual uint32_t getLastKnownBlockHeight() const override;
-  virtual uint32_t getLocalBlockCount() const override;
-  virtual uint32_t getKnownBlockCount() const override;
+  virtual uint64_t getLastLocalBlockHeight() const override;
+  virtual uint64_t getLastKnownBlockHeight() const override;
+  virtual uint64_t getLocalBlockCount() const override;
+  virtual uint64_t getKnownBlockCount() const override;
   virtual uint64_t getNodeHeight() const override;
 
   virtual void getFeeInfo() override;
@@ -79,13 +79,13 @@ public:
     std::unordered_set<Crypto::Hash> &transactionsUnknown,
     const Callback &callback) override;
 
-  virtual void queryBlocks(std::vector<Crypto::Hash>&& knownBlockIds, uint64_t timestamp, std::vector<BlockShortEntry>& newBlocks, uint32_t& startHeight, const Callback& callback) override;
+  virtual void queryBlocks(std::vector<Crypto::Hash>&& knownBlockIds, uint64_t timestamp, std::vector<BlockShortEntry>& newBlocks, uint64_t& startHeight, const Callback& callback) override;
   virtual void getWalletSyncData(std::vector<Crypto::Hash>&& knownBlockIds, uint64_t startHeight, uint64_t startTimestamp, std::vector<WalletTypes::WalletBlockInfo>& newBlocks, const Callback& callback) override;
   virtual void getPoolSymmetricDifference(std::vector<Crypto::Hash>&& knownPoolTxIds, Crypto::Hash knownBlockId, bool& isBcActual,
           std::vector<std::unique_ptr<ITransactionReader>>& newTxs, std::vector<Crypto::Hash>& deletedTxIds, const Callback& callback) override;
-  virtual void getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, const Callback& callback) override;
+  virtual void getBlocks(const std::vector<uint64_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, const Callback& callback) override;
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks, const Callback& callback) override;
-  virtual void getBlock(const uint32_t blockHeight, BlockDetails &block, const Callback& callback) override;
+  virtual void getBlock(const uint64_t blockHeight, BlockDetails &block, const Callback& callback) override;
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions, const Callback& callback) override;
   virtual void isSynchronized(bool& syncStatus, const Callback& callback) override;
   virtual std::string feeAddress() override;
@@ -125,15 +125,15 @@ private:
     std::unordered_set<Crypto::Hash> &transactionsUnknown);
 
   std::error_code doQueryBlocksLite(const std::vector<Crypto::Hash>& knownBlockIds, uint64_t timestamp,
-    std::vector<CryptoNote::BlockShortEntry>& newBlocks, uint32_t& startHeight);
+    std::vector<CryptoNote::BlockShortEntry>& newBlocks, uint64_t& startHeight);
 
   std::error_code doGetWalletSyncData(const std::vector<Crypto::Hash>& knownBlockIds, uint64_t startHeight, uint64_t startTimestamp, std::vector<WalletTypes::WalletBlockInfo>& newBlocks);
 
   std::error_code doGetPoolSymmetricDifference(std::vector<Crypto::Hash>&& knownPoolTxIds, Crypto::Hash knownBlockId, bool& isBcActual,
           std::vector<std::unique_ptr<ITransactionReader>>& newTxs, std::vector<Crypto::Hash>& deletedTxIds);
-  std::error_code doGetBlocksByHeight(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks);
+  std::error_code doGetBlocksByHeight(const std::vector<uint64_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks);
   std::error_code doGetBlocksByHash(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks);
-  std::error_code doGetBlock(const uint32_t blockHeight, BlockDetails& block);
+  std::error_code doGetBlock(const uint64_t blockHeight, BlockDetails& block);
   std::error_code doGetTransactionHashesByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes);
   std::error_code doGetTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<TransactionDetails>& transactions);
 
@@ -174,7 +174,7 @@ private:
   // Internal state
   bool m_stop = false;
   std::atomic<size_t> m_peerCount;
-  std::atomic<uint32_t> m_networkHeight;
+  std::atomic<uint64_t> m_networkHeight;
   std::atomic<uint64_t> m_nodeHeight;
 
   BlockHeaderInfo lastLocalBlockHeaderInfo;

@@ -71,7 +71,7 @@ std::vector<Crypto::Hash> TransactionPoolCleanWrapper::getTransactionHashesByPay
   return transactionPool->getTransactionHashesByPaymentId(paymentId);
 }
 
-std::vector<Crypto::Hash> TransactionPoolCleanWrapper::clean(const uint32_t height) {
+std::vector<Crypto::Hash> TransactionPoolCleanWrapper::clean(const uint64_t height) {
   try {
     uint64_t currentTime = timeProvider->now();
     auto transactionHashes = transactionPool->getTransactionHashes();

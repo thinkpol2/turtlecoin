@@ -230,11 +230,11 @@ void BlockchainExplorer::shutdown() {
   state.store(NOT_INITIALIZED);
 }
 
-bool BlockchainExplorer::getBlocks(const std::vector<uint32_t>& blockIndexes, std::vector<std::vector<BlockDetails>>& blocks) {
+bool BlockchainExplorer::getBlocks(const std::vector<uint64_t>& blockIndexes, std::vector<std::vector<BlockDetails>>& blocks) {
   return getBlocks(blockIndexes, blocks, true);
 }
 
-bool BlockchainExplorer::getBlocks(const std::vector<uint32_t>& blockIndexes, std::vector<std::vector<BlockDetails>>& blocks, bool checkInitialization) {
+bool BlockchainExplorer::getBlocks(const std::vector<uint64_t>& blockIndexes, std::vector<std::vector<BlockDetails>>& blocks, bool checkInitialization) {
   if (checkInitialization && state.load() != INITIALIZED) {
     throw std::system_error(make_error_code(CryptoNote::error::BlockchainExplorerErrorCodes::NOT_INITIALIZED));
   }
@@ -275,7 +275,7 @@ bool BlockchainExplorer::getBlocks(const std::vector<Hash>& blockHashes, std::ve
   return true;
 }
 
-bool BlockchainExplorer::getBlocks(uint64_t timestampBegin, uint64_t timestampEnd, uint32_t blocksNumberLimit, std::vector<BlockDetails>& blocks, uint32_t& blocksNumberWithinTimestamps) {
+bool BlockchainExplorer::getBlocks(uint64_t timestampBegin, uint64_t timestampEnd, uint64_t blocksNumberLimit, std::vector<BlockDetails>& blocks, uint64_t& blocksNumberWithinTimestamps) {
   if (state.load() != INITIALIZED) {
     throw std::system_error(make_error_code(CryptoNote::error::BlockchainExplorerErrorCodes::NOT_INITIALIZED));
   }
@@ -294,7 +294,7 @@ bool BlockchainExplorer::getBlocks(uint64_t timestampBegin, uint64_t timestampEn
     throw std::system_error(ec);
   }
 
-  blocksNumberWithinTimestamps = static_cast<uint32_t>(blockHashes.size());
+  blocksNumberWithinTimestamps = static_cast<uint64_t>(blockHashes.size());
 
   if (blocksNumberLimit < blocksNumberWithinTimestamps) {
     blockHashes.erase(std::next(blockHashes.begin(), blocksNumberLimit), blockHashes.end());
@@ -317,9 +317,9 @@ bool BlockchainExplorer::getBlockchainTop(BlockDetails& topBlock, bool checkInit
   }
 
   logger(DEBUGGING) << "Get blockchain top request came.";
-  uint32_t lastIndex = node.getLastLocalBlockHeight();
+  uint64_t lastIndex = node.getLastLocalBlockHeight();
 
-  std::vector<uint32_t> indexes;
+  std::vector<uint64_t> indexes;
   indexes.push_back(std::move(lastIndex));
 
   std::vector<std::vector<BlockDetails>> blocks;
@@ -568,7 +568,7 @@ void BlockchainExplorer::poolUpdateEndHandler() {
   }
 }
 
-void BlockchainExplorer::blockchainSynchronized(uint32_t topIndex) {
+void BlockchainExplorer::blockchainSynchronized(uint64_t topIndex) {
   logger(DEBUGGING) << "Got blockchainSynchronized notification.";
 
   synchronized.store(true);
@@ -588,7 +588,7 @@ void BlockchainExplorer::blockchainSynchronized(uint32_t topIndex) {
     return;
   }
 
-  std::shared_ptr<std::vector<uint32_t>> blockIndexesPtr = std::make_shared<std::vector<uint32_t>>();
+  std::shared_ptr<std::vector<uint64_t>> blockIndexesPtr = std::make_shared<std::vector<uint64_t>>();
   std::shared_ptr<std::vector<std::vector<BlockDetails>>> blocksPtr = std::make_shared<std::vector<std::vector<BlockDetails>>>();
 
   blockIndexesPtr->push_back(topIndex);
@@ -597,7 +597,7 @@ void BlockchainExplorer::blockchainSynchronized(uint32_t topIndex) {
     std::bind(
       static_cast<
         void(INode::*)(
-        const std::vector<uint32_t>&,
+        const std::vector<uint64_t>&,
           std::vector<std::vector<BlockDetails>>&, 
           const INode::Callback&
         )
@@ -626,7 +626,7 @@ void BlockchainExplorer::blockchainSynchronized(uint32_t topIndex) {
   );
 }
 
-void BlockchainExplorer::localBlockchainUpdated(uint32_t index) {
+void BlockchainExplorer::localBlockchainUpdated(uint64_t index) {
   logger(DEBUGGING) << "Got localBlockchainUpdated notification.";
   
   std::unique_lock<std::mutex> lock(mutex);
@@ -635,10 +635,10 @@ void BlockchainExplorer::localBlockchainUpdated(uint32_t index) {
     return;
   }
 
-  auto blockIndexesPtr = std::make_shared<std::vector<uint32_t>>();
+  auto blockIndexesPtr = std::make_shared<std::vector<uint64_t>>();
   auto blocksPtr = std::make_shared<std::vector<std::vector<BlockDetails>>>();
 
-  for (uint32_t i = knownBlockchainTop.index + 1; i <= index; ++i) {
+  for (uint64_t i = knownBlockchainTop.index + 1; i <= index; ++i) {
     blockIndexesPtr->push_back(i);
   }
 

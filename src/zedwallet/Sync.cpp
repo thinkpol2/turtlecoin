@@ -54,9 +54,9 @@ void checkForNewTransactions(std::shared_ptr<WalletInfo> walletInfo)
 void syncWallet(CryptoNote::INode &node,
                 std::shared_ptr<WalletInfo> walletInfo)
 {
-    uint32_t localHeight = node.getLastLocalBlockHeight();
-    uint32_t walletHeight = walletInfo->wallet.getBlockCount();
-    uint32_t remoteHeight = node.getLastKnownBlockHeight();
+    uint64_t localHeight = node.getLastLocalBlockHeight();
+    uint64_t walletHeight = walletInfo->wallet.getBlockCount();
+    uint64_t remoteHeight = node.getLastKnownBlockHeight();
 
     size_t transactionCount = walletInfo->wallet.getTransactionCount();
 
@@ -119,7 +119,7 @@ void syncWallet(CryptoNote::INode &node,
                   << " of " << InformationMsg(std::to_string(localHeight))
                   << std::endl;
 
-        const uint32_t tmpWalletHeight = walletInfo->wallet.getBlockCount();
+        const uint64_t tmpWalletHeight = walletInfo->wallet.getBlockCount();
 
         int waitSeconds = 1;
 

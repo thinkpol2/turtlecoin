@@ -35,10 +35,10 @@ public:
 
     //Returns IBlockchainStorageInternal with elements from [splitIndex, blocks.size() - 1].
     //Original IBlockchainStorageInternal will contain elements from [0, splitIndex - 1].
-    virtual std::unique_ptr<IBlockchainStorageInternal> splitStorage(uint32_t splitIndex) = 0;
+    virtual std::unique_ptr<IBlockchainStorageInternal> splitStorage(uint64_t splitIndex) = 0;
 
-    virtual RawBlock getBlockByIndex(uint32_t index) const = 0;
-    virtual uint32_t getBlockCount() const = 0;
+    virtual RawBlock getBlockByIndex(uint64_t index) const = 0;
+    virtual uint64_t getBlockCount() const = 0;
   };
 
   explicit BlockchainStorage(uint32_t reserveSize);
@@ -49,10 +49,10 @@ public:
 
   //Returns BlockchainStorage with elements from [splitIndex, blocks.size() - 1].
   //Original BlockchainStorage will contain elements from [0, splitIndex - 1].
-  virtual std::unique_ptr<BlockchainStorage> splitStorage(uint32_t splitIndex);
+  virtual std::unique_ptr<BlockchainStorage> splitStorage(uint64_t splitIndex);
 
-  virtual RawBlock getBlockByIndex(uint32_t index) const;
-  virtual uint32_t getBlockCount() const;
+  virtual RawBlock getBlockByIndex(uint64_t index) const;
+  virtual uint64_t getBlockCount() const;
 
 private:
   std::unique_ptr<IBlockchainStorageInternal> internalStorage;

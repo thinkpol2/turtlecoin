@@ -34,7 +34,7 @@ SynchronizationStart TransfersSubscription::getSyncStart() {
   return subscription.syncStart;
 }
 
-void TransfersSubscription::onBlockchainDetach(uint32_t height) {
+void TransfersSubscription::onBlockchainDetach(uint64_t height) {
   std::vector<Hash> deletedTransactions = transfers.detach(height);
   for (auto& hash : deletedTransactions) {
     logger(TRACE) << "Transaction deleted from wallet " << m_address << ", hash " << hash;
@@ -42,14 +42,14 @@ void TransfersSubscription::onBlockchainDetach(uint32_t height) {
   }
 }
 
-void TransfersSubscription::onError(const std::error_code& ec, uint32_t height) {
+void TransfersSubscription::onError(const std::error_code& ec, uint64_t height) {
   if (height != WALLET_UNCONFIRMED_TRANSACTION_HEIGHT) {
   transfers.detach(height);
   }
   m_observerManager.notify(&ITransfersObserver::onError, this, height, ec);
 }
 
-bool TransfersSubscription::advanceHeight(uint32_t height) {
+bool TransfersSubscription::advanceHeight(uint64_t height) {
   return transfers.advanceHeight(height);
 }
 

@@ -102,7 +102,7 @@ void TransfersSyncronizer::onBlocksAdded(IBlockchainConsumer* consumer, const st
   }
 }
 
-void TransfersSyncronizer::onBlockchainDetach(IBlockchainConsumer* consumer, uint32_t blockIndex) {
+void TransfersSyncronizer::onBlockchainDetach(IBlockchainConsumer* consumer, uint64_t blockIndex) {
   auto it = findSubscriberForConsumer(consumer);
   if (it != m_subscribers.end()) {
     it->second->notify(&ITransfersSynchronizerObserver::onBlockchainDetach, it->first, blockIndex);

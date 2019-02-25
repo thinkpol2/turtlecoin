@@ -88,7 +88,7 @@ inline IBlockchainCache* findIndexInChain(IBlockchainCache* blockSegment, const 
   return nullptr;
 }
 
-inline IBlockchainCache* findIndexInChain(IBlockchainCache* blockSegment, uint32_t blockIndex) {
+inline IBlockchainCache* findIndexInChain(IBlockchainCache* blockSegment, uint64_t blockIndex) {
   assert(blockSegment != nullptr);
   while (blockSegment != nullptr) {
     if (blockIndex >= blockSegment->getStartBlockIndex() &&
@@ -150,7 +150,7 @@ TransactionValidatorState extractSpentOutputs(const std::vector<CachedTransactio
   return resultOutputs;
 }
 
-int64_t getEmissionChange(const Currency& currency, IBlockchainCache& segment, uint32_t previousBlockIndex,
+int64_t getEmissionChange(const Currency& currency, IBlockchainCache& segment, uint64_t previousBlockIndex,
                           const CachedBlock& cachedBlock, uint64_t cumulativeSize, uint64_t cumulativeFee) {
 
   uint64_t reward = 0;
@@ -166,17 +166,17 @@ int64_t getEmissionChange(const Currency& currency, IBlockchainCache& segment, u
   return emissionChange;
 }
 
-uint32_t findCommonRoot(IMainChainStorage& storage, IBlockchainCache& rootSegment) {
+uint64_t findCommonRoot(IMainChainStorage& storage, IBlockchainCache& rootSegment) {
   assert(storage.getBlockCount());
   assert(rootSegment.getBlockCount());
   assert(rootSegment.getStartBlockIndex() == 0);
   assert(getBlockHash(storage.getBlockByIndex(0)) == rootSegment.getBlockHash(0));
 
-  uint32_t left = 0;
-  uint32_t right = std::min(storage.getBlockCount() - 1, rootSegment.getBlockCount() - 1);
+  uint64_t left = 0;
+  uint64_t right = std::min(storage.getBlockCount() - 1, rootSegment.getBlockCount() - 1);
   while (left != right) {
     assert(right >= left);
-    uint32_t checkElement = left + (right - left) / 2 + 1;
+    uint64_t checkElement = left + (right - left) / 2 + 1;
     if (getBlockHash(storage.getBlockByIndex(checkElement)) == rootSegment.getBlockHash(checkElement)) {
       left = checkElement;
     } else {
@@ -234,7 +234,7 @@ bool Core::notifyObservers(BlockchainMessage&& msg) /* noexcept */ {
   }
 }
 
-uint32_t Core::getTopBlockIndex() const {
+uint64_t Core::getTopBlockIndex() const {
   assert(!chainsStorage.empty());
   assert(!chainsLeaves.empty());
   throwIfNotInitialized();
@@ -251,7 +251,7 @@ Crypto::Hash Core::getTopBlockHash() const {
   return chainsLeaves[0]->getTopBlockHash();
 }
 
-Crypto::Hash Core::getBlockHashByIndex(uint32_t blockIndex) const {
+Crypto::Hash Core::getBlockHashByIndex(uint64_t blockIndex) const {
   assert(!chainsStorage.empty());
   assert(!chainsLeaves.empty());
   assert(blockIndex <= getTopBlockIndex());
@@ -261,7 +261,7 @@ Crypto::Hash Core::getBlockHashByIndex(uint32_t blockIndex) const {
   return chainsLeaves[0]->getBlockHash(blockIndex);
 }
 
-uint64_t Core::getBlockTimestampByIndex(uint32_t blockIndex) const {
+uint64_t Core::getBlockTimestampByIndex(uint64_t blockIndex) const {
   assert(!chainsStorage.empty());
   assert(!chainsLeaves.empty());
   assert(blockIndex <= getTopBlockIndex());
@@ -279,7 +279,7 @@ bool Core::hasBlock(const Crypto::Hash& blockHash) const {
   return findSegmentContainingBlock(blockHash) != nullptr;
 }
 
-BlockTemplate Core::getBlockByIndex(uint32_t index) const {
+BlockTemplate Core::getBlockByIndex(uint64_t index) const {
   assert(!chainsStorage.empty());
   assert(!chainsLeaves.empty());
   assert(index <= getTopBlockIndex());
@@ -302,7 +302,7 @@ BlockTemplate Core::getBlockByHash(const Crypto::Hash& blockHash) const {
     throw std::runtime_error("Requested hash wasn't found in main blockchain");
   }
 
-  uint32_t blockIndex = segment->getBlockIndex(blockHash);
+  uint64_t blockIndex = segment->getBlockIndex(blockHash);
 
   return restoreBlockTemplate(segment, blockIndex);
 }
@@ -313,7 +313,7 @@ std::vector<Crypto::Hash> Core::buildSparseChain() const {
   return doBuildSparseChain(topBlockHash);
 }
 
-std::vector<RawBlock> Core::getBlocks(uint32_t minIndex, uint32_t count) const {
+std::vector<RawBlock> Core::getBlocks(uint64_t minIndex, uint64_t count) const {
   assert(!chainsStorage.empty());
   assert(!chainsLeaves.empty());
 
@@ -356,7 +356,7 @@ void Core::getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<R
     if (blockchainSegment == nullptr) {
       missedHashes.push_back(hash);
     } else {
-      uint32_t blockIndex = blockchainSegment->getBlockIndex(hash);
+      uint64_t blockIndex = blockchainSegment->getBlockIndex(hash);
       assert(blockIndex <= blockchainSegment->getTopBlockIndex());
 
       blocks.push_back(blockchainSegment->getBlockByIndex(blockIndex));
@@ -379,8 +379,8 @@ void Core::copyTransactionsToPool(IBlockchainCache* alt) {
   }
 }
 
-bool Core::queryBlocks(const std::vector<Crypto::Hash>& blockHashes, uint64_t timestamp, uint32_t& startIndex,
-                       uint32_t& currentIndex, uint32_t& fullOffset, std::vector<BlockFullInfo>& entries) const {
+bool Core::queryBlocks(const std::vector<Crypto::Hash>& blockHashes, uint64_t timestamp, uint64_t& startIndex,
+                       uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockFullInfo>& entries) const {
   assert(entries.empty());
   assert(!chainsLeaves.empty());
   assert(!chainsStorage.empty());
@@ -412,8 +412,8 @@ bool Core::queryBlocks(const std::vector<Crypto::Hash>& blockHashes, uint64_t ti
   }
 }
 
-bool Core::queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp, uint32_t& startIndex,
-                           uint32_t& currentIndex, uint32_t& fullOffset, std::vector<BlockShortInfo>& entries) const {
+bool Core::queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp, uint64_t& startIndex,
+                           uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockShortInfo>& entries) const {
   assert(entries.empty());
   assert(!chainsLeaves.empty());
   assert(!chainsStorage.empty());
@@ -446,7 +446,7 @@ bool Core::queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, ui
 
     size_t hashesPushed = pushBlockHashes(startIndex, fullOffset, BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT, entries);
 
-    if (startIndex + static_cast<uint32_t>(hashesPushed) != fullOffset) {
+    if (startIndex + static_cast<uint64_t>(hashesPushed) != fullOffset) {
       return true;
     }
 
@@ -460,7 +460,7 @@ bool Core::queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, ui
 }
 
 bool Core::queryBlocksDetailed(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp, uint64_t& startIndex,
-                           uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockDetails>& entries, uint32_t blockCount) const {
+                           uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockDetails>& entries, uint64_t blockCount) const {
   assert(entries.empty());
   assert(!chainsLeaves.empty());
   assert(!chainsStorage.empty());
@@ -511,7 +511,7 @@ bool Core::queryBlocksDetailed(const std::vector<Crypto::Hash>& knownBlockHashes
 
     size_t hashesPushed = pushBlockHashes(startIndex, fullOffset, blockCount, entries);
 
-    if (startIndex + static_cast<uint32_t>(hashesPushed) != fullOffset) {
+    if (startIndex + static_cast<uint64_t>(hashesPushed) != fullOffset) {
       return true;
     }
 
@@ -920,7 +920,7 @@ void Core::getTransactions(const std::vector<Crypto::Hash>& transactionHashes, s
   missedHashes.insert(missedHashes.end(), leftTransactions.begin(), leftTransactions.end());
 }
 
-uint64_t Core::getBlockDifficulty(uint32_t blockIndex) const {
+uint64_t Core::getBlockDifficulty(uint64_t blockIndex) const {
   throwIfNotInitialized();
   IBlockchainCache* mainChain = chainsLeaves[0];
   auto difficulties = mainChain->getLastCumulativeDifficulties(2, blockIndex, addGenesisBlock);
@@ -937,7 +937,7 @@ uint64_t Core::getDifficultyForNextBlock() const {
   throwIfNotInitialized();
   IBlockchainCache* mainChain = chainsLeaves[0];
 
-  uint32_t topBlockIndex = mainChain->getTopBlockIndex();
+  uint64_t topBlockIndex = mainChain->getTopBlockIndex();
 
   uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(topBlockIndex);
 
@@ -950,8 +950,8 @@ uint64_t Core::getDifficultyForNextBlock() const {
 }
 
 std::vector<Crypto::Hash> Core::findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds,
-                                                         size_t maxCount, uint32_t& totalBlockCount,
-                                                         uint32_t& startBlockIndex) const {
+                                                         size_t maxCount, uint64_t& totalBlockCount,
+                                                         uint64_t& startBlockIndex) const {
   assert(!remoteBlockIds.empty());
   assert(remoteBlockIds.back() == getBlockHashByIndex(0));
   throwIfNotInitialized();
@@ -959,12 +959,12 @@ std::vector<Crypto::Hash> Core::findBlockchainSupplement(const std::vector<Crypt
   totalBlockCount = getTopBlockIndex() + 1;
   startBlockIndex = findBlockchainSupplement(remoteBlockIds);
 
-  return getBlockHashes(startBlockIndex, static_cast<uint32_t>(maxCount));
+  return getBlockHashes(startBlockIndex, static_cast<uint64_t>(maxCount));
 }
 
 std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlock) {
   throwIfNotInitialized();
-  uint32_t blockIndex = cachedBlock.getBlockIndex();
+  uint64_t blockIndex = cachedBlock.getBlockIndex();
   Crypto::Hash blockHash = cachedBlock.getBlockHash();
   std::ostringstream os;
   os << blockIndex << " (" << blockHash << ")";
@@ -1024,7 +1024,7 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
   // This allows us to accept blocks with transaction mixins for the mined money unlock window
   // that may be using older mixin rules on the network. This helps to clear out the transaction
   // pool during a network soft fork that requires a mixin lower or upper bound change
-  uint32_t mixinChangeWindow = blockIndex;
+  uint64_t mixinChangeWindow = blockIndex;
   if (mixinChangeWindow > CryptoNote::parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW)
   {
     mixinChangeWindow = mixinChangeWindow - CryptoNote::parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW;
@@ -1220,7 +1220,7 @@ void Core::actualizePoolTransactionsLite(const TransactionValidatorState& valida
   }
 }
 
-void Core::switchMainChainStorage(uint32_t splitBlockIndex, IBlockchainCache& newChain) {
+void Core::switchMainChainStorage(uint64_t splitBlockIndex, IBlockchainCache& newChain) {
   assert(mainChainStorage->getBlockCount() > splitBlockIndex);
 
   auto blocksToPop = mainChainStorage->getBlockCount() - splitBlockIndex;
@@ -1228,12 +1228,12 @@ void Core::switchMainChainStorage(uint32_t splitBlockIndex, IBlockchainCache& ne
     mainChainStorage->popBlock();
   }
 
-  for (uint32_t index = splitBlockIndex; index <= newChain.getTopBlockIndex(); ++index) {
+  for (uint64_t index = splitBlockIndex; index <= newChain.getTopBlockIndex(); ++index) {
     mainChainStorage->pushBlock(newChain.getBlockByIndex(index));
   }
 }
 
-void Core::notifyOnSuccess(error::AddBlockErrorCode opResult, uint32_t previousBlockIndex,
+void Core::notifyOnSuccess(error::AddBlockErrorCode opResult, uint64_t previousBlockIndex,
                            const CachedBlock& cachedBlock, const IBlockchainCache& cache) {
   switch (opResult) {
     case error::AddBlockErrorCode::ADDED_TO_MAIN:
@@ -1538,7 +1538,7 @@ bool Core::getPoolChangesLite(const Crypto::Hash& lastBlockHash, const std::vect
 }
 
 bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, const BinaryArray& extraNonce,
-                            uint64_t& difficulty, uint32_t& height) const {
+                            uint64_t& difficulty, uint64_t& height) const {
   throwIfNotInitialized();
 
   height = getTopBlockIndex() + 1;
@@ -1767,7 +1767,7 @@ bool Core::extractTransactions(const std::vector<BinaryArray>& rawTransactions,
 }
 
 std::error_code Core::validateTransaction(const CachedTransaction& cachedTransaction, TransactionValidatorState& state,
-                                          IBlockchainCache* cache, uint64_t& fee, uint32_t blockIndex) {
+                                          IBlockchainCache* cache, uint64_t& fee, uint64_t blockIndex) {
   // TransactionValidatorState currentState;
   const auto& transaction = cachedTransaction.getTransaction();
 auto error = validateSemantic(transaction, fee, blockIndex);
@@ -1828,7 +1828,7 @@ auto error = validateSemantic(transaction, fee, blockIndex);
   return error::TransactionValidationError::VALIDATION_SUCCESS;
 }
 
-std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t& fee, uint32_t blockIndex) {
+std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t& fee, uint64_t blockIndex) {
   if (transaction.inputs.empty()) {
     return error::TransactionValidationError::EMPTY_INPUTS;
   }
@@ -1916,7 +1916,7 @@ std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t&
   return error::TransactionValidationError::VALIDATION_SUCCESS;
 }
 
-uint32_t Core::findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds) const {
+uint64_t Core::findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds) const {
   /* Requester doesn't know anything about the chain yet */
   if (remoteBlockIds.empty())
   {
@@ -1934,7 +1934,7 @@ uint32_t Core::findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteB
   throw std::runtime_error("Genesis block hash was not found.");
 }
 
-std::vector<Crypto::Hash> CryptoNote::Core::getBlockHashes(uint32_t startBlockIndex, uint32_t maxCount) const {
+std::vector<Crypto::Hash> CryptoNote::Core::getBlockHashes(uint64_t startBlockIndex, uint64_t maxCount) const {
   return chainsLeaves[0]->getBlockHashes(startBlockIndex, maxCount);
 }
 
@@ -2084,14 +2084,14 @@ void Core::initRootSegment() {
 }
 
 void Core::importBlocksFromStorage() {
-  uint32_t commonIndex = findCommonRoot(*mainChainStorage, *chainsLeaves[0]);
+  uint64_t commonIndex = findCommonRoot(*mainChainStorage, *chainsLeaves[0]);
   assert(commonIndex <= mainChainStorage->getBlockCount());
 
   cutSegment(*chainsLeaves[0], commonIndex + 1);
 
   auto previousBlockHash = getBlockHash(mainChainStorage->getBlockByIndex(commonIndex));
   auto blockCount = mainChainStorage->getBlockCount();
-  for (uint32_t i = commonIndex + 1; i < blockCount; ++i) {
+  for (uint64_t i = commonIndex + 1; i < blockCount; ++i) {
     RawBlock rawBlock = mainChainStorage->getBlockByIndex(i);
     auto blockTemplate = extractBlockTemplate(rawBlock);
     CachedBlock cachedBlock(blockTemplate);
@@ -2129,7 +2129,7 @@ void Core::importBlocksFromStorage() {
   }
 }
 
-void Core::cutSegment(IBlockchainCache& segment, uint32_t startIndex) {
+void Core::cutSegment(IBlockchainCache& segment, uint64_t startIndex) {
   if (segment.getTopBlockIndex() < startIndex) {
     return;
   }
@@ -2162,7 +2162,7 @@ IBlockchainCache* Core::findSegmentContainingBlock(const Crypto::Hash& blockHash
   return findAlternativeSegmentContainingBlock(blockHash);
 }
 
-IBlockchainCache* Core::findSegmentContainingBlock(uint32_t blockHeight) const {
+IBlockchainCache* Core::findSegmentContainingBlock(uint64_t blockHeight) const {
   assert(chainsLeaves.size() > 0);
 
   // first search in main chain
@@ -2187,19 +2187,19 @@ IBlockchainCache* Core::findMainChainSegmentContainingBlock(const Crypto::Hash& 
   return findIndexInChain(chainsLeaves[0], blockHash);
 }
 
-IBlockchainCache* Core::findMainChainSegmentContainingBlock(uint32_t blockIndex) const {
+IBlockchainCache* Core::findMainChainSegmentContainingBlock(uint64_t blockIndex) const {
   return findIndexInChain(chainsLeaves[0], blockIndex);
 }
 
 // WTF?! this function returns first chain it is able to find..
-IBlockchainCache* Core::findAlternativeSegmentContainingBlock(uint32_t blockIndex) const {
+IBlockchainCache* Core::findAlternativeSegmentContainingBlock(uint64_t blockIndex) const {
   IBlockchainCache* cache = nullptr;
   std::find_if(++chainsLeaves.begin(), chainsLeaves.end(),
                [&](IBlockchainCache* chain) { return cache = findIndexInChain(chain, blockIndex); });
   return nullptr;
 }
 
-BlockTemplate Core::restoreBlockTemplate(IBlockchainCache* blockchainCache, uint32_t blockIndex) const {
+BlockTemplate Core::restoreBlockTemplate(IBlockchainCache* blockchainCache, uint64_t blockIndex) const {
   RawBlock rawBlock = blockchainCache->getBlockByIndex(blockIndex);
 
   BlockTemplate block;
@@ -2213,13 +2213,13 @@ BlockTemplate Core::restoreBlockTemplate(IBlockchainCache* blockchainCache, uint
 std::vector<Crypto::Hash> Core::doBuildSparseChain(const Crypto::Hash& blockHash) const {
   IBlockchainCache* chain = findSegmentContainingBlock(blockHash);
 
-  uint32_t blockIndex = chain->getBlockIndex(blockHash);
+  uint64_t blockIndex = chain->getBlockIndex(blockHash);
 
   // TODO reserve ceil(log(blockIndex))
   std::vector<Crypto::Hash> sparseChain;
   sparseChain.push_back(blockHash);
 
-  for (uint32_t i = 1; i < blockIndex; i *= 2) {
+  for (uint64_t i = 1; i < blockIndex; i *= 2) {
     sparseChain.push_back(chain->getBlockHash(blockIndex - i));
   }
 
@@ -2231,17 +2231,17 @@ std::vector<Crypto::Hash> Core::doBuildSparseChain(const Crypto::Hash& blockHash
   return sparseChain;
 }
 
-RawBlock Core::getRawBlock(IBlockchainCache* segment, uint32_t blockIndex) const {
+RawBlock Core::getRawBlock(IBlockchainCache* segment, uint64_t blockIndex) const {
   assert(blockIndex >= segment->getStartBlockIndex() && blockIndex <= segment->getTopBlockIndex());
 
   return segment->getBlockByIndex(blockIndex);
 }
 
 //TODO: decompose these three methods
-size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount,
+size_t Core::pushBlockHashes(uint64_t startIndex, uint64_t fullOffset, size_t maxItemsCount,
                              std::vector<BlockShortInfo>& entries) const {
   assert(fullOffset >= startIndex);
-  uint32_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint32_t>(maxItemsCount));
+  uint64_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint64_t>(maxItemsCount));
   if (itemsCount == 0) {
     return 0;
   }
@@ -2256,10 +2256,10 @@ size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t ma
 }
 
 //TODO: decompose these three methods
-size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount,
+size_t Core::pushBlockHashes(uint64_t startIndex, uint64_t fullOffset, size_t maxItemsCount,
                              std::vector<BlockDetails>& entries) const {
   assert(fullOffset >= startIndex);
-  uint32_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint32_t>(maxItemsCount));
+  uint64_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint64_t>(maxItemsCount));
   if (itemsCount == 0) {
     return 0;
   }
@@ -2274,10 +2274,10 @@ size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t ma
 }
 
 //TODO: decompose these three methods
-size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount,
+size_t Core::pushBlockHashes(uint64_t startIndex, uint64_t fullOffset, size_t maxItemsCount,
                              std::vector<BlockFullInfo>& entries) const {
   assert(fullOffset >= startIndex);
-  uint32_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint32_t>(maxItemsCount));
+  uint64_t itemsCount = std::min(fullOffset - startIndex, static_cast<uint64_t>(maxItemsCount));
   if (itemsCount == 0) {
     return 0;
   }
@@ -2291,15 +2291,15 @@ size_t Core::pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t ma
   return blockIds.size();
 }
 
-void Core::fillQueryBlockFullInfo(uint32_t fullOffset, uint32_t currentIndex, size_t maxItemsCount,
+void Core::fillQueryBlockFullInfo(uint64_t fullOffset, uint64_t currentIndex, size_t maxItemsCount,
                                   std::vector<BlockFullInfo>& entries) const {
   assert(currentIndex >= fullOffset);
 
-  uint32_t fullBlocksCount =
-      static_cast<uint32_t>(std::min(static_cast<uint32_t>(maxItemsCount), currentIndex - fullOffset));
+  uint64_t fullBlocksCount =
+      static_cast<uint64_t>(std::min(static_cast<uint64_t>(maxItemsCount), currentIndex - fullOffset));
   entries.reserve(entries.size() + fullBlocksCount);
 
-  for (uint32_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
+  for (uint64_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
     IBlockchainCache* segment = findMainChainSegmentContainingBlock(blockIndex);
 
     BlockFullInfo blockFullInfo;
@@ -2310,14 +2310,14 @@ void Core::fillQueryBlockFullInfo(uint32_t fullOffset, uint32_t currentIndex, si
   }
 }
 
-void Core::fillQueryBlockShortInfo(uint32_t fullOffset, uint32_t currentIndex, size_t maxItemsCount,
+void Core::fillQueryBlockShortInfo(uint64_t fullOffset, uint64_t currentIndex, size_t maxItemsCount,
                                    std::vector<BlockShortInfo>& entries) const {
   assert(currentIndex >= fullOffset);
 
-  uint32_t fullBlocksCount = static_cast<uint32_t>(std::min(static_cast<uint32_t>(maxItemsCount), currentIndex - fullOffset + 1));
+  uint64_t fullBlocksCount = static_cast<uint64_t>(std::min(static_cast<uint64_t>(maxItemsCount), currentIndex - fullOffset + 1));
   entries.reserve(entries.size() + fullBlocksCount);
 
-  for (uint32_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
+  for (uint64_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
     IBlockchainCache* segment = findMainChainSegmentContainingBlock(blockIndex);
     RawBlock rawBlock = getRawBlock(segment, blockIndex);
 
@@ -2349,10 +2349,10 @@ void Core::fillQueryBlockDetails(uint32_t fullOffset, uint32_t currentIndex, siz
                                    std::vector<BlockDetails>& entries) const {
   assert(currentIndex >= fullOffset);
 
-  uint32_t fullBlocksCount = static_cast<uint32_t>(std::min(static_cast<uint32_t>(maxItemsCount), currentIndex - fullOffset + 1));
+  uint64_t fullBlocksCount = static_cast<uint64_t>(std::min(static_cast<uint64_t>(maxItemsCount), currentIndex - fullOffset + 1));
   entries.reserve(entries.size() + fullBlocksCount);
 
-  for (uint32_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
+  for (uint64_t blockIndex = fullOffset; blockIndex < fullOffset + fullBlocksCount; ++blockIndex) {
     IBlockchainCache* segment = findMainChainSegmentContainingBlock(blockIndex);
     Crypto::Hash blockHash = segment->getBlockHash(blockIndex);
     BlockDetails block = getBlockDetails(blockHash);
@@ -2382,11 +2382,11 @@ void Core::getTransactionPoolDifference(const std::vector<Crypto::Hash>& knownHa
   deletedTransactions.assign(knownTransactions.begin(), knownTransactions.end());
 }
 
-uint8_t Core::getBlockMajorVersionForHeight(uint32_t height) const {
+uint8_t Core::getBlockMajorVersionForHeight(uint64_t height) const {
   return upgradeManager->getBlockMajorVersion(height);
 }
 
-size_t Core::calculateCumulativeBlocksizeLimit(uint32_t height) const {
+size_t Core::calculateCumulativeBlocksizeLimit(uint64_t height) const {
   uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(height);
   size_t nextBlockGrantedFullRewardZone = currency.blockGrantedFullRewardZoneByBlockVersion(nextBlockMajorVersion);
 
@@ -2590,7 +2590,7 @@ void Core::mergeSegments(IBlockchainCache* acceptingSegment, IBlockchainCache* s
   }
 }
 
-BlockDetails Core::getBlockDetails(const uint32_t blockHeight) const {
+BlockDetails Core::getBlockDetails(const uint64_t blockHeight) const {
   throwIfNotInitialized();
 
   IBlockchainCache* segment = findSegmentContainingBlock(blockHeight);
@@ -2609,7 +2609,7 @@ BlockDetails Core::getBlockDetails(const Crypto::Hash& blockHash) const {
     throw std::runtime_error("Requested hash wasn't found in blockchain.");
   }
 
-  uint32_t blockIndex = segment->getBlockIndex(blockHash);
+  uint64_t blockIndex = segment->getBlockIndex(blockHash);
   BlockTemplate blockTemplate = restoreBlockTemplate(segment, blockIndex);
 
   BlockDetails blockDetails;

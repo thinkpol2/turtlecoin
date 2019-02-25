@@ -32,7 +32,7 @@ BlockchainReadBatch::~BlockchainReadBatch() {
 
 }
 
-BlockchainReadBatch& BlockchainReadBatch::requestSpentKeyImagesByBlock(uint32_t blockIndex) {
+BlockchainReadBatch& BlockchainReadBatch::requestSpentKeyImagesByBlock(uint64_t blockIndex) {
   state.spentKeyImagesByBlock.emplace(blockIndex, std::vector<Crypto::KeyImage>());
   return *this;
 }
@@ -57,12 +57,12 @@ BlockchainReadBatch& BlockchainReadBatch::requestCachedTransactions(const std::v
     return *this;
 }
 
-BlockchainReadBatch& BlockchainReadBatch::requestTransactionHashesByBlock(uint32_t blockIndex) {
+BlockchainReadBatch& BlockchainReadBatch::requestTransactionHashesByBlock(uint64_t blockIndex) {
   state.transactionHashesByBlocks.emplace(blockIndex, std::vector<Crypto::Hash>());
   return *this;
 }
 
-BlockchainReadBatch& BlockchainReadBatch::requestCachedBlock(uint32_t blockIndex) {
+BlockchainReadBatch& BlockchainReadBatch::requestCachedBlock(uint64_t blockIndex) {
   state.cachedBlocks.emplace(blockIndex, CachedBlockInfo());
   return *this;
 }
@@ -77,12 +77,12 @@ BlockchainReadBatch& BlockchainReadBatch::requestKeyOutputGlobalIndexesCountForA
   return *this;
 }
 
-BlockchainReadBatch& BlockchainReadBatch::requestKeyOutputGlobalIndexForAmount(IBlockchainCache::Amount amount, uint32_t outputIndexWithinAmout) {
-  state.keyOutputGlobalIndexesForAmounts.emplace(std::make_pair(amount, outputIndexWithinAmout), PackedOutIndex());
+BlockchainReadBatch& BlockchainReadBatch::requestKeyOutputGlobalIndexForAmount(IBlockchainCache::Amount amount, uint64_t outputIndexWithinAmount) {
+  state.keyOutputGlobalIndexesForAmounts.emplace(std::make_pair(amount, outputIndexWithinAmount), PackedOutIndex());
   return *this;
 }
 
-BlockchainReadBatch& BlockchainReadBatch::requestRawBlock(uint32_t blockIndex) {
+BlockchainReadBatch& BlockchainReadBatch::requestRawBlock(uint64_t blockIndex) {
   state.rawBlocks.emplace(blockIndex, RawBlock());
   return *this;
 }
@@ -191,11 +191,11 @@ BlockchainReadResult::~BlockchainReadResult() {
 
 }
 
-const std::unordered_map<uint32_t, std::vector<Crypto::KeyImage>>& BlockchainReadResult::getSpentKeyImagesByBlock() const {
+const std::unordered_map<uint64_t, std::vector<Crypto::KeyImage>>& BlockchainReadResult::getSpentKeyImagesByBlock() const {
   return state.spentKeyImagesByBlock;
 }
 
-const std::unordered_map<Crypto::KeyImage, uint32_t>& BlockchainReadResult::getBlockIndexesBySpentKeyImages() const {
+const std::unordered_map<Crypto::KeyImage, uint64_t>& BlockchainReadResult::getBlockIndexesBySpentKeyImages() const {
   return state.blockIndexesBySpentKeyImages;
 }
 
@@ -203,35 +203,35 @@ const std::unordered_map<Crypto::Hash, ExtendedTransactionInfo>& BlockchainReadR
   return state.cachedTransactions;
 }
 
-const std::unordered_map<uint32_t, std::vector<Crypto::Hash>>& BlockchainReadResult::getTransactionHashesByBlocks() const {
+const std::unordered_map<uint64_t, std::vector<Crypto::Hash>>& BlockchainReadResult::getTransactionHashesByBlocks() const {
   return state.transactionHashesByBlocks;
 }
 
-const std::unordered_map<uint32_t, CachedBlockInfo>& BlockchainReadResult::getCachedBlocks() const {
+const std::unordered_map<uint64_t, CachedBlockInfo>& BlockchainReadResult::getCachedBlocks() const {
   return state.cachedBlocks;
 }
 
-const std::unordered_map<Crypto::Hash, uint32_t>& BlockchainReadResult::getBlockIndexesByBlockHashes() const {
+const std::unordered_map<Crypto::Hash, uint64_t>& BlockchainReadResult::getBlockIndexesByBlockHashes() const {
   return state.blockIndexesByBlockHashes;
 }
 
-const std::unordered_map<IBlockchainCache::Amount, uint32_t>& BlockchainReadResult::getKeyOutputGlobalIndexesCountForAmounts() const {
+const std::unordered_map<IBlockchainCache::Amount, uint64_t>& BlockchainReadResult::getKeyOutputGlobalIndexesCountForAmounts() const {
   return state.keyOutputGlobalIndexesCountForAmounts;
 }
 
-const std::unordered_map<std::pair<IBlockchainCache::Amount, uint32_t>, PackedOutIndex>& BlockchainReadResult::getKeyOutputGlobalIndexesForAmounts() const {
+const std::unordered_map<std::pair<IBlockchainCache::Amount, uint64_t>, PackedOutIndex>& BlockchainReadResult::getKeyOutputGlobalIndexesForAmounts() const {
   return state.keyOutputGlobalIndexesForAmounts;
 }
 
-const std::unordered_map<uint32_t, RawBlock>& BlockchainReadResult::getRawBlocks() const {
+const std::unordered_map<uint64_t, RawBlock>& BlockchainReadResult::getRawBlocks() const {
   return state.rawBlocks;
 }
 
-const std::pair<uint32_t, bool>& BlockchainReadResult::getLastBlockIndex() const {
+const std::pair<uint64_t, bool>& BlockchainReadResult::getLastBlockIndex() const {
   return state.lastBlockIndex;
 }
 
-const std::unordered_map<uint64_t, uint32_t>& BlockchainReadResult::getClosestTimestampBlockIndex() const {
+const std::unordered_map<uint64_t, uint64_t>& BlockchainReadResult::getClosestTimestampBlockIndex() const {
   return state.closestTimestampBlockIndex;
 }
 

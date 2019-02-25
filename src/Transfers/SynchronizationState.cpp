@@ -27,16 +27,16 @@ using namespace Common;
 
 namespace CryptoNote {
 
-SynchronizationState::ShortHistory SynchronizationState::getShortHistory(uint32_t localHeight) const {
+SynchronizationState::ShortHistory SynchronizationState::getShortHistory(uint64_t localHeight) const {
   ShortHistory history;
-  uint32_t i = 0;
-  uint32_t current_multiplier = 1;
-  uint32_t sz = std::min(static_cast<uint32_t>(m_blockchain.size()), localHeight + 1);
+  uint64_t i = 0;
+  uint64_t current_multiplier = 1;
+  uint64_t sz = std::min(static_cast<uint64_t>(m_blockchain.size()), localHeight + 1);
 
   if (!sz)
     return history;
 
-  uint32_t current_back_offset = 1;
+  uint64_t current_back_offset = 1;
   bool genesis_included = false;
 
   while (current_back_offset < sz) {
@@ -63,10 +63,10 @@ SynchronizationState::CheckResult SynchronizationState::checkInterval(const Bloc
 
   CheckResult result = { false, 0, false, 0 };
 
-  uint32_t intervalEnd = interval.startHeight + static_cast<uint32_t>(interval.blocks.size());
-  uint32_t iterationEnd = std::min(static_cast<uint32_t>(m_blockchain.size()), intervalEnd);
+  uint64_t intervalEnd = interval.startHeight + static_cast<uint64_t>(interval.blocks.size());
+  uint64_t iterationEnd = std::min(static_cast<uint64_t>(m_blockchain.size()), intervalEnd);
 
-  for (uint32_t i = interval.startHeight; i < iterationEnd; ++i) {
+  for (uint64_t i = interval.startHeight; i < iterationEnd; ++i) {
     if (m_blockchain[i] != interval.blocks[i - interval.startHeight]) {
       result.detachRequired = true;
       result.detachHeight = i;
@@ -82,18 +82,18 @@ SynchronizationState::CheckResult SynchronizationState::checkInterval(const Bloc
 
   if (intervalEnd > m_blockchain.size()) {
     result.hasNewBlocks = true;
-    result.newBlockHeight = static_cast<uint32_t>(m_blockchain.size());
+    result.newBlockHeight = static_cast<uint64_t>(m_blockchain.size());
   }
 
   return result;
 }
 
-void SynchronizationState::detach(uint32_t height) {
+void SynchronizationState::detach(uint64_t height) {
   assert(height < m_blockchain.size());
   m_blockchain.resize(height);
 }
 
-void SynchronizationState::addBlocks(const Crypto::Hash* blockHashes, uint32_t height, uint32_t count) {
+void SynchronizationState::addBlocks(const Crypto::Hash* blockHashes, uint64_t height, uint32_t count) {
   assert(blockHashes);
   auto size = m_blockchain.size();
   if (size) {}
@@ -104,8 +104,8 @@ void SynchronizationState::addBlocks(const Crypto::Hash* blockHashes, uint32_t h
   m_blockchain.insert(m_blockchain.end(), blockHashes, blockHashes + count);
 }
 
-uint32_t SynchronizationState::getHeight() const {
-  return static_cast<uint32_t>(m_blockchain.size());
+uint64_t SynchronizationState::getHeight() const {
+  return static_cast<uint64_t>(m_blockchain.size());
 }
 
 const std::vector<Crypto::Hash>& SynchronizationState::getKnownBlockHashes() const {

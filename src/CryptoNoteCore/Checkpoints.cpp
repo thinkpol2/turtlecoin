@@ -25,7 +25,7 @@ namespace CryptoNote {
 //---------------------------------------------------------------------------
 Checkpoints::Checkpoints(std::shared_ptr<Logging::ILogger> log) : logger(log, "checkpoints") {}
 //---------------------------------------------------------------------------
-bool Checkpoints::addCheckpoint(uint32_t index, const std::string &hash_str) {
+bool Checkpoints::addCheckpoint(uint64_t index, const std::string &hash_str) {
   Crypto::Hash h = NULL_HASH;
 
   if (!Common::podFromHex(hash_str, h)) {
@@ -107,11 +107,11 @@ bool Checkpoints::loadCheckpointsFromFile(const std::string& filename)
 }
 
 //---------------------------------------------------------------------------
-bool Checkpoints::isInCheckpointZone(uint32_t index) const {
+bool Checkpoints::isInCheckpointZone(uint64_t index) const {
   return !points.empty() && (index <= (--points.end())->first);
 }
 //---------------------------------------------------------------------------
-bool Checkpoints::checkBlock(uint32_t index, const Crypto::Hash &h,
+bool Checkpoints::checkBlock(uint64_t index, const Crypto::Hash &h,
                             bool& isCheckpoint) const {
   auto it = points.find(index);
   isCheckpoint = it != points.end();
@@ -132,7 +132,7 @@ bool Checkpoints::checkBlock(uint32_t index, const Crypto::Hash &h,
   }
 }
 //---------------------------------------------------------------------------
-bool Checkpoints::checkBlock(uint32_t index, const Crypto::Hash &h) const {
+bool Checkpoints::checkBlock(uint64_t index, const Crypto::Hash &h) const {
   bool ignored;
   return checkBlock(index, h, ignored);
 }

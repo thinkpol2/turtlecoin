@@ -34,31 +34,31 @@ public:
   virtual bool addMessageQueue(MessageQueue<BlockchainMessage>& messageQueue) = 0;
   virtual bool removeMessageQueue(MessageQueue<BlockchainMessage>& messageQueue) = 0;
 
-  virtual uint32_t getTopBlockIndex() const = 0;
+  virtual uint64_t getTopBlockIndex() const = 0;
   virtual Crypto::Hash getTopBlockHash() const = 0;
-  virtual Crypto::Hash getBlockHashByIndex(uint32_t blockIndex) const = 0;
-  virtual uint64_t getBlockTimestampByIndex(uint32_t blockIndex) const = 0;
+  virtual Crypto::Hash getBlockHashByIndex(uint64_t blockIndex) const = 0;
+  virtual uint64_t getBlockTimestampByIndex(uint64_t blockIndex) const = 0;
 
   virtual bool hasBlock(const Crypto::Hash& blockHash) const = 0;
-  virtual BlockTemplate getBlockByIndex(uint32_t index) const = 0;
+  virtual BlockTemplate getBlockByIndex(uint64_t index) const = 0;
   virtual BlockTemplate getBlockByHash(const Crypto::Hash& blockHash) const = 0;
 
   virtual std::vector<Crypto::Hash> buildSparseChain() const = 0;
   virtual std::vector<Crypto::Hash> findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds,
-                                                             size_t maxCount, uint32_t& totalBlockCount,
-                                                             uint32_t& startBlockIndex) const = 0;
+                                                             size_t maxCount, uint64_t& totalBlockCount,
+                                                             uint64_t& startBlockIndex) const = 0;
 
-  virtual std::vector<RawBlock> getBlocks(uint32_t startIndex, uint32_t count) const = 0;
+  virtual std::vector<RawBlock> getBlocks(uint64_t startIndex, uint64_t count) const = 0;
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<RawBlock>& blocks,
                          std::vector<Crypto::Hash>& missedHashes) const = 0;
-  virtual bool queryBlocks(const std::vector<Crypto::Hash>& blockHashes, uint64_t timestamp, uint32_t& startIndex,
-                           uint32_t& currentIndex, uint32_t& fullOffset, std::vector<BlockFullInfo>& entries) const = 0;
+  virtual bool queryBlocks(const std::vector<Crypto::Hash>& blockHashes, uint64_t timestamp, uint64_t& startIndex,
+                           uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockFullInfo>& entries) const = 0;
   virtual bool queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp,
-                               uint32_t& startIndex, uint32_t& currentIndex, uint32_t& fullOffset,
+                               uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset,
                                std::vector<BlockShortInfo>& entries) const = 0;
   virtual bool queryBlocksDetailed(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp,
                               uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset,
-                              std::vector<BlockDetails>& entries, uint32_t blockCount) const = 0;
+                              std::vector<BlockDetails>& entries, uint64_t blockCount) const = 0;
 
   virtual bool getWalletSyncData(
     const std::vector<Crypto::Hash> &knownBlockHashes,
@@ -84,7 +84,7 @@ public:
                                std::vector<BinaryArray>& transactions,
                                std::vector<Crypto::Hash>& missedHashes) const = 0;
 
-  virtual uint64_t getBlockDifficulty(uint32_t blockIndex) const = 0;
+  virtual uint64_t getBlockDifficulty(uint64_t blockIndex) const = 0;
   virtual uint64_t getDifficultyForNextBlock() const = 0;
 
   virtual std::error_code addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlock) = 0;
@@ -114,7 +114,7 @@ public:
                                   std::vector<Crypto::Hash>& deletedTransactions) const = 0;
 
   virtual bool getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, const BinaryArray& extraNonce,
-                                uint64_t& difficulty, uint32_t& height) const = 0;
+                                uint64_t& difficulty, uint64_t& height) const = 0;
 
   virtual CoreStatistics getCoreStatistics() const = 0;
 

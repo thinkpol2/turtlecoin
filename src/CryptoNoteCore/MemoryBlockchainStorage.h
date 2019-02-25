@@ -30,10 +30,10 @@ public:
 
   //Returns MemoryBlockchainStorage with elements from [splitIndex, blocks.size() - 1].
   //Original MemoryBlockchainStorage will contain elements from [0, splitIndex - 1].
-  virtual std::unique_ptr<BlockchainStorage::IBlockchainStorageInternal> splitStorage(uint32_t splitIndex) override;
+  virtual std::unique_ptr<BlockchainStorage::IBlockchainStorageInternal> splitStorage(uint64_t splitIndex) override;
 
-  virtual RawBlock getBlockByIndex(uint32_t index) const override;
-  virtual uint32_t getBlockCount() const override;
+  virtual RawBlock getBlockByIndex(uint64_t index) const override;
+  virtual uint64_t getBlockCount() const override;
 
 private:
   std::vector<RawBlock> blocks;

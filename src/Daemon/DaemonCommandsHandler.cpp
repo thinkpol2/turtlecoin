@@ -118,9 +118,9 @@ bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args) {
 		return false;
 	}
 
-	uint32_t start_index = 0;
-	uint32_t end_index = 0;
-	uint32_t end_block_parametr = m_core.getTopBlockIndex();
+	uint64_t start_index = 0;
+	uint64_t end_index = 0;
+	uint64_t end_block_parametr = m_core.getTopBlockIndex();
 
 	if (!Common::fromString(args[0], start_index)) {
 		std::cout << "wrong starter block index parameter" << ENDL;
@@ -204,7 +204,7 @@ bool DaemonCommandsHandler::set_log(const std::vector<std::string>& args)
 }
 
 //--------------------------------------------------------------------------------
-bool DaemonCommandsHandler::print_block_by_height(uint32_t height)
+bool DaemonCommandsHandler::print_block_by_height(uint64_t height)
 {
   if (height - 1 > m_core.getTopBlockIndex()) {
     std::cout << "block wasn't found. Current block chain height: " << m_core.getTopBlockIndex() + 1 << ", requested: " << height << std::endl;
@@ -242,7 +242,7 @@ bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args) {
 
   const std::string &arg = args.front();
   try {
-    uint32_t height = boost::lexical_cast<uint32_t>(arg);
+    uint64_t height = boost::lexical_cast<uint32_t>(arg);
     print_block_by_height(height);
   } catch (boost::bad_lexical_cast &) {
     print_block_by_hash(arg);

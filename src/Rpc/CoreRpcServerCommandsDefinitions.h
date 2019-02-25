@@ -41,7 +41,7 @@ struct COMMAND_RPC_GET_HEIGHT {
 
   struct response {
     uint64_t height;
-    uint32_t network_height;
+    uint64_t network_height;
     std::string status;
 
     void serialize(ISerializer &s) {
@@ -326,8 +326,8 @@ struct COMMAND_RPC_GET_INFO {
     uint64_t incoming_connections_count;
     uint64_t white_peerlist_size;
     uint64_t grey_peerlist_size;
-    uint32_t last_known_block_index;
-    uint32_t network_height;
+    uint64_t last_known_block_index;
+    uint64_t network_height;
     std::vector<uint64_t> upgrade_heights;
     uint64_t supported_height;
     uint32_t hashrate;
@@ -409,7 +409,7 @@ struct COMMAND_RPC_GETBLOCKTEMPLATE {
 
   struct response {
     uint64_t difficulty;
-    uint32_t height;
+    uint64_t height;
     uint64_t reserved_offset;
     std::string blocktemplate_blob;
     std::string status;
@@ -448,7 +448,7 @@ struct block_header_response {
   std::string prev_hash;
   uint32_t nonce;
   bool orphan_status;
-  uint32_t height;
+  uint64_t height;
   uint32_t depth;
   std::string hash;
   uint64_t difficulty;
@@ -555,7 +555,7 @@ struct f_transaction_details_response {
 struct f_block_short_response {
   uint64_t difficulty;
   uint64_t timestamp;
-  uint32_t height;
+  uint64_t height;
   std::string hash;
   uint64_t tx_count;
   uint64_t cumul_size;
@@ -577,7 +577,7 @@ struct f_block_details_response {
   std::string prev_hash;
   uint32_t nonce;
   bool orphan_status;
-  uint32_t height;
+  uint64_t height;
   uint64_t depth;
   std::string hash;
   uint64_t difficulty;
@@ -783,7 +783,7 @@ struct COMMAND_RPC_QUERY_BLOCKS_DETAILED {
   struct request {
     std::vector<Crypto::Hash> blockIds;
     uint64_t timestamp;
-    uint32_t blockCount;
+    uint64_t blockCount;
 
     void serialize(ISerializer &s) {
       KV_MEMBER(blockIds);
@@ -873,7 +873,7 @@ struct COMMAND_RPC_GET_TRANSACTIONS_STATUS
 
 struct COMMAND_RPC_GET_BLOCKS_DETAILS_BY_HEIGHTS {
   struct request {
-    std::vector<uint32_t> blockHeights;
+    std::vector<uint64_t> blockHeights;
 
     void serialize(ISerializer& s) {
       KV_MEMBER(blockHeights);
@@ -913,7 +913,7 @@ struct COMMAND_RPC_GET_BLOCKS_DETAILS_BY_HASHES {
 
 struct COMMAND_RPC_GET_BLOCK_DETAILS_BY_HEIGHT {
   struct request {
-    uint32_t blockHeight;
+    uint64_t blockHeight;
 
     void serialize(ISerializer& s) {
       KV_MEMBER(blockHeight)

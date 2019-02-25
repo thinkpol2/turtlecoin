@@ -760,7 +760,7 @@ std::error_code WalletService::getBalance(uint64_t& availableBalance, uint64_t& 
   return std::error_code();
 }
 
-std::error_code WalletService::getBlockHashes(uint32_t firstBlockIndex, uint32_t blockCount, std::vector<std::string>& blockHashes) {
+std::error_code WalletService::getBlockHashes(uint64_t firstBlockIndex, uint64_t blockCount, std::vector<std::string>& blockHashes) {
   try {
     System::EventLock lk(readyEvent);
     std::vector<Crypto::Hash> hashes = wallet.getBlockHashes(firstBlockIndex, blockCount);
@@ -820,7 +820,7 @@ std::error_code WalletService::getMnemonicSeed(const std::string& address, std::
 }
 
 std::error_code WalletService::getTransactionHashes(const std::vector<std::string>& addresses, const std::string& blockHashString,
-  uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes) {
+  uint64_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes) {
   try {
     System::EventLock lk(readyEvent);
     validateAddresses(addresses, currency, logger);
@@ -844,8 +844,8 @@ std::error_code WalletService::getTransactionHashes(const std::vector<std::strin
   return std::error_code();
 }
 
-std::error_code WalletService::getTransactionHashes(const std::vector<std::string>& addresses, uint32_t firstBlockIndex,
-  uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes) {
+std::error_code WalletService::getTransactionHashes(const std::vector<std::string>& addresses, uint64_t firstBlockIndex,
+  uint64_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes) {
   try {
     System::EventLock lk(readyEvent);
     validateAddresses(addresses, currency, logger);
@@ -869,7 +869,7 @@ std::error_code WalletService::getTransactionHashes(const std::vector<std::strin
 }
 
 std::error_code WalletService::getTransactions(const std::vector<std::string>& addresses, const std::string& blockHashString,
-  uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions) {
+  uint64_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions) {
   try {
     System::EventLock lk(readyEvent);
     validateAddresses(addresses, currency, logger);
@@ -894,8 +894,8 @@ std::error_code WalletService::getTransactions(const std::vector<std::string>& a
   return std::error_code();
 }
 
-std::error_code WalletService::getTransactions(const std::vector<std::string>& addresses, uint32_t firstBlockIndex,
-  uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions) {
+std::error_code WalletService::getTransactions(const std::vector<std::string>& addresses, uint64_t firstBlockIndex,
+  uint64_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions) {
   try {
     System::EventLock lk(readyEvent);
     validateAddresses(addresses, currency, logger);
@@ -1249,11 +1249,11 @@ std::error_code WalletService::getUnconfirmedTransactionHashes(const std::vector
 }
 
 /* blockCount = the blocks the wallet has synced. knownBlockCount = the top block the daemon knows of. localDaemonBlockCount = the blocks the daemon has synced. */
-std::error_code WalletService::getStatus(uint32_t& blockCount, uint32_t& knownBlockCount, uint64_t& localDaemonBlockCount, std::string& lastBlockHash, uint32_t& peerCount) {
+std::error_code WalletService::getStatus(uint64_t& blockCount, uint64_t& knownBlockCount, uint64_t& localDaemonBlockCount, std::string& lastBlockHash, uint32_t& peerCount) {
   try {
     System::EventLock lk(readyEvent);
 
-    System::RemoteContext<std::tuple<uint32_t, uint64_t, uint32_t>> remoteContext(dispatcher, [this] () {
+    System::RemoteContext<std::tuple<uint64_t, uint64_t, uint32_t>> remoteContext(dispatcher, [this] () {
       /* Daemon remote height, daemon local height, peer count */
       return std::make_tuple(node.getKnownBlockCount(), node.getNodeHeight(), static_cast<uint32_t>(node.getPeerCount()));
     });
@@ -1399,7 +1399,7 @@ std::vector<CryptoNote::TransactionsInBlockInfo> WalletService::getTransactions(
   return result;
 }
 
-std::vector<CryptoNote::TransactionsInBlockInfo> WalletService::getTransactions(uint32_t firstBlockIndex, size_t blockCount) const {
+std::vector<CryptoNote::TransactionsInBlockInfo> WalletService::getTransactions(uint64_t firstBlockIndex, size_t blockCount) const {
   std::vector<CryptoNote::TransactionsInBlockInfo> result = wallet.getTransactions(firstBlockIndex, blockCount);
   if (result.empty()) {
     throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND));
@@ -1414,7 +1414,7 @@ std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHas
   return convertTransactionsInBlockInfoToTransactionHashesInBlockRpcInfo(filteredTransactions);
 }
 
-std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHashes(uint32_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const {
+std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHashes(uint64_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const {
   std::vector<CryptoNote::TransactionsInBlockInfo> allTransactions = getTransactions(firstBlockIndex, blockCount);
   std::vector<CryptoNote::TransactionsInBlockInfo> filteredTransactions = filterTransactions(allTransactions, filter);
   return convertTransactionsInBlockInfoToTransactionHashesInBlockRpcInfo(filteredTransactions);
@@ -1426,7 +1426,7 @@ std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(const 
   return convertTransactionsInBlockInfoToTransactionsInBlockRpcInfo(filteredTransactions);
 }
 
-std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(uint32_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const {
+std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(uint64_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const {
   std::vector<CryptoNote::TransactionsInBlockInfo> allTransactions = getTransactions(firstBlockIndex, blockCount);
   std::vector<CryptoNote::TransactionsInBlockInfo> filteredTransactions = filterTransactions(allTransactions, filter);
   return convertTransactionsInBlockInfoToTransactionsInBlockRpcInfo(filteredTransactions);

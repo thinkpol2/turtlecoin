@@ -40,27 +40,27 @@ public:
   virtual bool addMessageQueue(MessageQueue<BlockchainMessage>&  messageQueue) override;
   virtual bool removeMessageQueue(MessageQueue<BlockchainMessage>& messageQueue) override;
 
-  virtual uint32_t getTopBlockIndex() const override;
+  virtual uint64_t getTopBlockIndex() const override;
   virtual Crypto::Hash getTopBlockHash() const override;
-  virtual Crypto::Hash getBlockHashByIndex(uint32_t blockIndex) const override;
-  virtual uint64_t getBlockTimestampByIndex(uint32_t blockIndex) const override;
+  virtual Crypto::Hash getBlockHashByIndex(uint64_t blockIndex) const override;
+  virtual uint64_t getBlockTimestampByIndex(uint64_t blockIndex) const override;
 
   virtual bool hasBlock(const Crypto::Hash& blockHash) const override;
-  virtual BlockTemplate getBlockByIndex(uint32_t index) const override;
+  virtual BlockTemplate getBlockByIndex(uint64_t index) const override;
   virtual BlockTemplate getBlockByHash(const Crypto::Hash& blockHash) const override;
 
   virtual std::vector<Crypto::Hash> buildSparseChain() const override;
   virtual std::vector<Crypto::Hash> findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds, size_t maxCount,
-    uint32_t& totalBlockCount, uint32_t& startBlockIndex) const override;
+    uint64_t& totalBlockCount, uint64_t& startBlockIndex) const override;
 
-  virtual std::vector<RawBlock> getBlocks(uint32_t minIndex, uint32_t count) const override;
+  virtual std::vector<RawBlock> getBlocks(uint64_t minIndex, uint64_t count) const override;
   virtual void getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<RawBlock>& blocks, std::vector<Crypto::Hash>& missedHashes) const override;
   virtual bool queryBlocks(const std::vector<Crypto::Hash>& blockHashes, uint64_t timestamp,
-    uint32_t& startIndex, uint32_t& currentIndex, uint32_t& fullOffset, std::vector<BlockFullInfo>& entries) const override;
+    uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockFullInfo>& entries) const override;
   virtual bool queryBlocksLite(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp,
-    uint32_t& startIndex, uint32_t& currentIndex, uint32_t& fullOffset, std::vector<BlockShortInfo>& entries) const override;
+    uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockShortInfo>& entries) const override;
   virtual bool queryBlocksDetailed(const std::vector<Crypto::Hash>& knownBlockHashes, uint64_t timestamp,
-    uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockDetails>& entries, uint32_t blockCount) const override;
+    uint64_t& startIndex, uint64_t& currentIndex, uint64_t& fullOffset, std::vector<BlockDetails>& entries, uint64_t blockCount) const override;
 
   virtual bool getWalletSyncData(
     const std::vector<Crypto::Hash> &knownBlockHashes,
@@ -79,7 +79,7 @@ public:
   virtual std::optional<BinaryArray> getTransaction(const Crypto::Hash& transactionHash) const override;
   virtual void getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<BinaryArray>& transactions, std::vector<Crypto::Hash>& missedHashes) const override;
 
-  virtual uint64_t getBlockDifficulty(uint32_t blockIndex) const override;
+  virtual uint64_t getBlockDifficulty(uint64_t blockIndex) const override;
   virtual uint64_t getDifficultyForNextBlock() const override;
 
   virtual std::error_code addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlock) override;
@@ -104,7 +104,7 @@ public:
   virtual bool getPoolChangesLite(const Crypto::Hash& lastBlockHash, const std::vector<Crypto::Hash>& knownHashes, std::vector<TransactionPrefixInfo>& addedTransactions,
     std::vector<Crypto::Hash>& deletedTransactions) const override;
 
-  virtual bool getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, const BinaryArray& extraNonce, uint64_t& difficulty, uint32_t& height) const override;
+  virtual bool getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, const BinaryArray& extraNonce, uint64_t& difficulty, uint64_t& height) const override;
 
   virtual CoreStatistics getCoreStatistics() const override;
 
@@ -122,7 +122,7 @@ public:
   virtual void load() override;
 
   virtual BlockDetails getBlockDetails(const Crypto::Hash& blockHash) const override;
-  BlockDetails getBlockDetails(const uint32_t blockHeight) const;
+  BlockDetails getBlockDetails(const uint64_t blockHeight) const;
   virtual TransactionDetails getTransactionDetails(const Crypto::Hash& transactionHash) const override;
   virtual std::vector<Crypto::Hash> getBlockHashesByTimestamps(uint64_t timestampBegin, size_t secondsCount) const override;
   virtual std::vector<Crypto::Hash> getTransactionHashesByPaymentId(const Crypto::Hash& paymentId) const override;
@@ -155,43 +155,43 @@ private:
   void throwIfNotInitialized() const;
   bool extractTransactions(const std::vector<BinaryArray>& rawTransactions, std::vector<CachedTransaction>& transactions, uint64_t& cumulativeSize);
 
-  std::error_code validateSemantic(const Transaction& transaction, uint64_t& fee, uint32_t blockIndex);
-  std::error_code validateTransaction(const CachedTransaction& transaction, TransactionValidatorState& state, IBlockchainCache* cache, uint64_t& fee, uint32_t blockIndex);
+  std::error_code validateSemantic(const Transaction& transaction, uint64_t& fee, uint64_t blockIndex);
+  std::error_code validateTransaction(const CachedTransaction& transaction, TransactionValidatorState& state, IBlockchainCache* cache, uint64_t& fee, uint64_t blockIndex);
 
-  uint32_t findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds) const;
-  std::vector<Crypto::Hash> getBlockHashes(uint32_t startBlockIndex, uint32_t maxCount) const;
+  uint64_t findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds) const;
+  std::vector<Crypto::Hash> getBlockHashes(uint64_t startBlockIndex, uint64_t maxCount) const;
 
   std::error_code validateBlock(const CachedBlock& block, IBlockchainCache* cache, uint64_t& minerReward);
 
   uint64_t getAdjustedTime() const;
   void updateMainChainSet();
   IBlockchainCache* findSegmentContainingBlock(const Crypto::Hash& blockHash) const;
-  IBlockchainCache* findSegmentContainingBlock(uint32_t blockHeight) const;
+  IBlockchainCache* findSegmentContainingBlock(uint64_t blockHeight) const;
   IBlockchainCache* findMainChainSegmentContainingBlock(const Crypto::Hash& blockHash) const;
   IBlockchainCache* findAlternativeSegmentContainingBlock(const Crypto::Hash& blockHash) const;
 
-  IBlockchainCache* findMainChainSegmentContainingBlock(uint32_t blockIndex) const;
-  IBlockchainCache* findAlternativeSegmentContainingBlock(uint32_t blockIndex) const;
+  IBlockchainCache* findMainChainSegmentContainingBlock(uint64_t blockIndex) const;
+  IBlockchainCache* findAlternativeSegmentContainingBlock(uint64_t blockIndex) const;
 
   IBlockchainCache* findSegmentContainingTransaction(const Crypto::Hash& transactionHash) const;
 
-  BlockTemplate restoreBlockTemplate(IBlockchainCache* blockchainCache, uint32_t blockIndex) const;
+  BlockTemplate restoreBlockTemplate(IBlockchainCache* blockchainCache, uint64_t blockIndex) const;
   std::vector<Crypto::Hash> doBuildSparseChain(const Crypto::Hash& blockHash) const;
 
-  RawBlock getRawBlock(IBlockchainCache* segment, uint32_t blockIndex) const;
+  RawBlock getRawBlock(IBlockchainCache* segment, uint64_t blockIndex) const;
 
-  size_t pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount, std::vector<BlockShortInfo>& entries) const;
-  size_t pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount, std::vector<BlockFullInfo>& entries) const;
-  size_t pushBlockHashes(uint32_t startIndex, uint32_t fullOffset, size_t maxItemsCount, std::vector<BlockDetails>& entries) const;
+  size_t pushBlockHashes(uint64_t startIndex, uint64_t fullOffset, size_t maxItemsCount, std::vector<BlockShortInfo>& entries) const;
+  size_t pushBlockHashes(uint64_t startIndex, uint64_t fullOffset, size_t maxItemsCount, std::vector<BlockFullInfo>& entries) const;
+  size_t pushBlockHashes(uint64_t startIndex, uint64_t fullOffset, size_t maxItemsCount, std::vector<BlockDetails>& entries) const;
   bool notifyObservers(BlockchainMessage&& msg);
-  void fillQueryBlockFullInfo(uint32_t fullOffset, uint32_t currentIndex, size_t maxItemsCount, std::vector<BlockFullInfo>& entries) const;
-  void fillQueryBlockShortInfo(uint32_t fullOffset, uint32_t currentIndex, size_t maxItemsCount, std::vector<BlockShortInfo>& entries) const;
-  void fillQueryBlockDetails(uint32_t fullOffset, uint32_t currentIndex, size_t maxItemsCount, std::vector<BlockDetails>& entries) const;
+  void fillQueryBlockFullInfo(uint64_t fullOffset, uint64_t currentIndex, size_t maxItemsCount, std::vector<BlockFullInfo>& entries) const;
+  void fillQueryBlockShortInfo(uint64_t fullOffset, uint64_t currentIndex, size_t maxItemsCount, std::vector<BlockShortInfo>& entries) const;
+  void fillQueryBlockDetails(uint64_t fullOffset, uint64_t currentIndex, size_t maxItemsCount, std::vector<BlockDetails>& entries) const;
 
   void getTransactionPoolDifference(const std::vector<Crypto::Hash>& knownHashes, std::vector<Crypto::Hash>& newTransactions, std::vector<Crypto::Hash>& deletedTransactions) const;
 
-  uint8_t getBlockMajorVersionForHeight(uint32_t height) const;
-  size_t calculateCumulativeBlocksizeLimit(uint32_t height) const;
+  uint8_t getBlockMajorVersionForHeight(uint64_t height) const;
+  size_t calculateCumulativeBlocksizeLimit(uint64_t height) const;
 
   bool validateBlockTemplateTransaction(
     const CachedTransaction &cachedTransaction,
@@ -210,7 +210,7 @@ private:
   void mergeMainChainSegments();
   void mergeSegments(IBlockchainCache* acceptingSegment, IBlockchainCache* segment);
   TransactionDetails getTransactionDetails(const Crypto::Hash& transactionHash, IBlockchainCache* segment, bool foundInPool) const;
-  void notifyOnSuccess(error::AddBlockErrorCode opResult, uint32_t previousBlockIndex, const CachedBlock& cachedBlock,
+  void notifyOnSuccess(error::AddBlockErrorCode opResult, uint64_t previousBlockIndex, const CachedBlock& cachedBlock,
                        const IBlockchainCache& cache);
   void copyTransactionsToPool(IBlockchainCache* alt);
 
@@ -224,9 +224,9 @@ private:
 
   void initRootSegment();
   void importBlocksFromStorage();
-  void cutSegment(IBlockchainCache& segment, uint32_t startIndex);
+  void cutSegment(IBlockchainCache& segment, uint64_t startIndex);
 
-  void switchMainChainStorage(uint32_t splitBlockIndex, IBlockchainCache& newChain);
+  void switchMainChainStorage(uint64_t splitBlockIndex, IBlockchainCache& newChain);
 
   static WalletTypes::RawCoinbaseTransaction getRawCoinbaseTransaction(
     const CryptoNote::Transaction &t);

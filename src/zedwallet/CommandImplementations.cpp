@@ -110,9 +110,9 @@ void balance(CryptoNote::INode &node, CryptoNote::WalletGreen &wallet,
     const uint64_t unconfirmedBalance = wallet.getPendingBalance();
     uint64_t confirmedBalance = wallet.getActualBalance();
 
-    const uint32_t localHeight = node.getLastLocalBlockHeight();
-    const uint32_t remoteHeight = node.getLastKnownBlockHeight();
-    const uint32_t walletHeight = wallet.getBlockCount();
+    const uint64_t localHeight = node.getLastLocalBlockHeight();
+    const uint64_t remoteHeight = node.getLastKnownBlockHeight();
+    const uint64_t walletHeight = wallet.getBlockCount();
 
     /* We can make a better approximation of the view wallet balance if we
        ignore fusion transactions.
@@ -180,8 +180,8 @@ void balance(CryptoNote::INode &node, CryptoNote::WalletGreen &wallet,
     }
 }
 
-void printHeights(uint32_t localHeight, uint32_t remoteHeight,
-                  uint32_t walletHeight)
+void printHeights(uint64_t localHeight, uint64_t remoteHeight,
+                  uint64_t walletHeight)
 {
     /* This is the height that the wallet has been scanned to. The blockchain
        can be fully updated, but we have to walk the chain to find our
@@ -214,8 +214,8 @@ void printHeights(uint32_t localHeight, uint32_t remoteHeight,
               << SuccessMsg(std::to_string(remoteHeight)) << std::endl;
 }
 
-void printSyncStatus(uint32_t localHeight, uint32_t remoteHeight,
-                     uint32_t walletHeight)
+void printSyncStatus(uint64_t localHeight, uint64_t remoteHeight,
+                     uint64_t walletHeight)
 {
     std::string networkSyncPercentage
         = Utilities::get_sync_percentage(localHeight, remoteHeight) + "%";
@@ -247,8 +247,8 @@ void printSyncStatus(uint32_t localHeight, uint32_t remoteHeight,
     }
 }
 
-void printSyncSummary(uint32_t localHeight, uint32_t remoteHeight,
-                      uint32_t walletHeight)
+void printSyncSummary(uint64_t localHeight, uint64_t remoteHeight,
+                      uint64_t walletHeight)
 {
     if (localHeight == 0 && remoteHeight == 0)
     {
@@ -306,9 +306,9 @@ void printHashrate(uint64_t difficulty)
    response when the node is having issues. */
 void status(CryptoNote::INode &node, CryptoNote::WalletGreen &wallet)
 {
-    uint32_t localHeight = node.getLastLocalBlockHeight();
-    uint32_t remoteHeight = node.getLastKnownBlockHeight();
-    uint32_t walletHeight = wallet.getBlockCount();
+    uint64_t localHeight = node.getLastLocalBlockHeight();
+    uint64_t remoteHeight = node.getLastKnownBlockHeight();
+    uint64_t walletHeight = wallet.getBlockCount();
 
     /* Print the heights of local, remote, and wallet */
     printHeights(localHeight, remoteHeight, walletHeight);

@@ -54,9 +54,9 @@ public:
   virtual bool addObserver(IBlockchainObserver* observer) override;
   virtual bool removeObserver(IBlockchainObserver* observer) override;
 
-  virtual bool getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks) override;
+  virtual bool getBlocks(const std::vector<uint64_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks) override;
   virtual bool getBlocks(const std::vector<Crypto::Hash>& blockHashes, std::vector<BlockDetails>& blocks) override;
-  virtual bool getBlocks(uint64_t timestampBegin, uint64_t timestampEnd, uint32_t blocksNumberLimit, std::vector<BlockDetails>& blocks, uint32_t& blocksNumberWithinTimestamps) override;
+  virtual bool getBlocks(uint64_t timestampBegin, uint64_t timestampEnd, uint64_t blocksNumberLimit, std::vector<BlockDetails>& blocks, uint64_t& blocksNumberWithinTimestamps) override;
 
   virtual bool getBlockchainTop(BlockDetails& topBlock) override;
 
@@ -70,8 +70,8 @@ public:
   virtual void shutdown() override;
 
   virtual void poolChanged() override;
-  virtual void blockchainSynchronized(uint32_t topIndex) override;
-  virtual void localBlockchainUpdated(uint32_t index) override;
+  virtual void blockchainSynchronized(uint64_t topIndex) override;
+  virtual void localBlockchainUpdated(uint64_t index) override;
 
   typedef WalletAsyncContextCounter AsyncContextCounter;
 
@@ -96,7 +96,7 @@ private:
   };
 
   bool getBlockchainTop(BlockDetails& topBlock, bool checkInitialization);
-  bool getBlocks(const std::vector<uint32_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, bool checkInitialization);
+  bool getBlocks(const std::vector<uint64_t>& blockHeights, std::vector<std::vector<BlockDetails>>& blocks, bool checkInitialization);
 
   void rebuildIndexes();
   void handleBlockchainUpdatedNotification(const std::vector<std::vector<BlockDetails>>& blocks);

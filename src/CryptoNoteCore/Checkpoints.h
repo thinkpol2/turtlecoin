@@ -27,13 +27,13 @@ namespace CryptoNote
   public:
     Checkpoints(std::shared_ptr<Logging::ILogger> log);
 
-    bool addCheckpoint(uint32_t index, const std::string& hash_str);
+    bool addCheckpoint(uint64_t index, const std::string& hash_str);
     bool loadCheckpointsFromFile(const std::string& fileName);
-    bool isInCheckpointZone(uint32_t index) const;
-    bool checkBlock(uint32_t index, const Crypto::Hash& h) const;
-    bool checkBlock(uint32_t index, const Crypto::Hash& h, bool& isCheckpoint) const;
+    bool isInCheckpointZone(uint64_t index) const;
+    bool checkBlock(uint64_t index, const Crypto::Hash& h) const;
+    bool checkBlock(uint64_t index, const Crypto::Hash& h, bool& isCheckpoint) const;
   private:
-    std::map<uint32_t, Crypto::Hash> points;
+    std::map<uint64_t, Crypto::Hash> points;
     Logging::LoggerRef logger;
   };
 }

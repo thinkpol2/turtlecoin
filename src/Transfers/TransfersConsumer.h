@@ -39,8 +39,8 @@ public:
 
   // IBlockchainConsumer
   virtual SynchronizationStart getSyncStart() override;
-  virtual void onBlockchainDetach(uint32_t height) override;
-  virtual uint32_t onNewBlocks(const CompleteBlock* blocks, uint32_t startHeight, uint32_t count) override;
+  virtual void onBlockchainDetach(uint64_t height) override;
+  virtual uint64_t onNewBlocks(const CompleteBlock* blocks, uint64_t startHeight, uint32_t count) override;
   virtual std::error_code onPoolUpdated(const std::vector<std::unique_ptr<ITransactionReader>>& addedTransactions, const std::vector<Crypto::Hash>& deletedTransactions) override;
   virtual const std::unordered_set<Crypto::Hash>& getKnownPoolTxIds() const override;
 

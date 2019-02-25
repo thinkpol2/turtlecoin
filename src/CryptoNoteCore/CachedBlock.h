@@ -22,7 +22,7 @@ public:
   const BinaryArray& getBlockHashingBinaryArray() const;
   const BinaryArray& getParentBlockBinaryArray(bool headerOnly) const;
   const BinaryArray& getParentBlockHashingBinaryArray(bool headerOnly) const;
-  uint32_t getBlockIndex() const;
+  uint64_t getBlockIndex() const;
 
 private:
   const BlockTemplate& block;
@@ -31,7 +31,7 @@ private:
   mutable boost::optional<BinaryArray> parentBlockHashingBinaryArray;
   mutable boost::optional<BinaryArray> parentBlockBinaryArrayHeaderOnly;
   mutable boost::optional<BinaryArray> parentBlockHashingBinaryArrayHeaderOnly;
-  mutable boost::optional<uint32_t> blockIndex;
+  mutable boost::optional<uint64_t> blockIndex;
   mutable boost::optional<Crypto::Hash> transactionTreeHash;
   mutable boost::optional<Crypto::Hash> blockHash;
   mutable boost::optional<Crypto::Hash> blockLongHash;

@@ -66,7 +66,7 @@ bool Currency::init() {
 
   if (isTestnet()) {
     m_upgradeHeightV2 = 0;
-    m_upgradeHeightV3 = static_cast<uint32_t>(-1);
+    m_upgradeHeightV3 = static_cast<uint64_t>(-1);
     m_blocksFileName = "testnet_" + m_blocksFileName;
     m_blockIndexesFileName = "testnet_" + m_blockIndexesFileName;
     m_txPoolFileName = "testnet_" + m_txPoolFileName;
@@ -132,7 +132,7 @@ size_t Currency::difficultyCutByBlockVersion(uint8_t blockMajorVersion) const {
   }
 }
 
-size_t Currency::difficultyBlocksCountByBlockVersion(uint8_t blockMajorVersion, uint32_t height) const
+size_t Currency::difficultyBlocksCountByBlockVersion(uint8_t blockMajorVersion, uint64_t height) const
 {
     if (height >= CryptoNote::parameters::LWMA_2_DIFFICULTY_BLOCK_INDEX)
     {
@@ -152,7 +152,7 @@ size_t Currency::blockGrantedFullRewardZoneByBlockVersion(uint8_t blockMajorVers
   }
 }
 
-uint32_t Currency::upgradeHeight(uint8_t majorVersion) const {
+uint64_t Currency::upgradeHeight(uint8_t majorVersion) const {
   if (majorVersion == BLOCK_MAJOR_VERSION_2) {
     return m_upgradeHeightV2;
   } else if (majorVersion == BLOCK_MAJOR_VERSION_3) {
@@ -162,7 +162,7 @@ uint32_t Currency::upgradeHeight(uint8_t majorVersion) const {
   } else if (majorVersion == BLOCK_MAJOR_VERSION_5) {
     return m_upgradeHeightV5;
   } else {
-    return static_cast<uint32_t>(-1);
+    return static_cast<uint64_t>(-1);
   }
 }
 
@@ -200,7 +200,7 @@ size_t Currency::maxBlockCumulativeSize(uint64_t height) const {
   return maxSize;
 }
 
-bool Currency::constructMinerTx(uint8_t blockMajorVersion, uint32_t height, size_t medianSize, uint64_t alreadyGeneratedCoins, size_t currentBlockSize,
+bool Currency::constructMinerTx(uint8_t blockMajorVersion, uint64_t height, size_t medianSize, uint64_t alreadyGeneratedCoins, size_t currentBlockSize,
   uint64_t fee, const AccountPublicAddress& minerAddress, Transaction& tx, const BinaryArray& extraNonce/* = BinaryArray()*/, size_t maxOuts/* = 1*/) const {
 
   tx.inputs.clear();
@@ -281,7 +281,7 @@ bool Currency::constructMinerTx(uint8_t blockMajorVersion, uint32_t height, size
   return true;
 }
 
-bool Currency::isFusionTransaction(const std::vector<uint64_t>& inputsAmounts, const std::vector<uint64_t>& outputsAmounts, size_t size, uint32_t height) const {
+bool Currency::isFusionTransaction(const std::vector<uint64_t>& inputsAmounts, const std::vector<uint64_t>& outputsAmounts, size_t size, uint64_t height) const {
   if (size > fusionTxMaxSize()) {
     return false;
   }
@@ -311,7 +311,7 @@ bool Currency::isFusionTransaction(const std::vector<uint64_t>& inputsAmounts, c
   return expectedOutputsAmounts == outputsAmounts;
 }
 
-bool Currency::isFusionTransaction(const Transaction& transaction, size_t size, uint32_t height) const {
+bool Currency::isFusionTransaction(const Transaction& transaction, size_t size, uint64_t height) const {
   assert(getObjectBinarySize(transaction) == size);
 
   std::vector<uint64_t> outputsAmounts;
@@ -323,16 +323,16 @@ bool Currency::isFusionTransaction(const Transaction& transaction, size_t size, 
   return isFusionTransaction(getInputsAmounts(transaction), outputsAmounts, size, height);
 }
 
-bool Currency::isFusionTransaction(const Transaction& transaction, uint32_t height) const {
+bool Currency::isFusionTransaction(const Transaction& transaction, uint64_t height) const {
   return isFusionTransaction(transaction, getObjectBinarySize(transaction), height);
 }
 
-bool Currency::isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold, uint32_t height) const {
+bool Currency::isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold, uint64_t height) const {
   uint8_t ignore;
   return isAmountApplicableInFusionTransactionInput(amount, threshold, ignore, height);
 }
 
-bool Currency::isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold, uint8_t& amountPowerOfTen, uint32_t height) const {
+bool Currency::isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold, uint8_t& amountPowerOfTen, uint64_t height) const {
   if (amount >= threshold) {
     return false;
   }
@@ -426,7 +426,7 @@ bool Currency::parseAmount(const std::string& str, uint64_t& amount) const {
   return Common::fromString(strAmount, amount);
 }
 
-uint64_t Currency::getNextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties) const
+uint64_t Currency::getNextDifficulty(uint8_t version, uint64_t blockIndex, std::vector<uint64_t> timestamps, std::vector<uint64_t> cumulativeDifficulties) const
 {
     /* nextDifficultyV3 and above are defined in src/CryptoNoteCore/Difficulty.cpp */
     if (blockIndex >= CryptoNote::parameters::LWMA_3_DIFFICULTY_BLOCK_INDEX)
@@ -451,7 +451,7 @@ uint64_t Currency::getNextDifficulty(uint8_t version, uint32_t blockIndex, std::
     }
 }
 
-uint64_t Currency::nextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps,
+uint64_t Currency::nextDifficulty(uint8_t version, uint64_t blockIndex, std::vector<uint64_t> timestamps,
   std::vector<uint64_t> cumulativeDifficulties) const {
 
 std::vector<uint64_t> timestamps_o(timestamps);
@@ -846,7 +846,7 @@ CurrencyBuilder& CurrencyBuilder::upgradeVotingThreshold(unsigned int val) {
   return *this;
 }
 
-CurrencyBuilder& CurrencyBuilder::upgradeWindow(uint32_t val) {
+CurrencyBuilder& CurrencyBuilder::upgradeWindow(uint64_t val) {
   if (val <= 0) {
     throw std::invalid_argument("val at upgradeWindow()");
   }

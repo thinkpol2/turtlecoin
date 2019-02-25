@@ -39,20 +39,20 @@ namespace CryptoNote {
 class ISerializer;
 
 struct SpentKeyImage {
-  uint32_t blockIndex;
+  uint64_t blockIndex;
   Crypto::KeyImage keyImage;
 
   void serialize(ISerializer& s);
 };
 
 struct CachedTransactionInfo {
-  uint32_t blockIndex;
+  uint64_t blockIndex;
   uint32_t transactionIndex;
   Crypto::Hash transactionHash;
   uint64_t unlockTime;
   std::vector<TransactionOutputTarget> outputs;
   //needed for getTransactionGlobalIndexes query
-  std::vector<uint32_t> globalIndexes;
+  std::vector<uint64_t> globalIndexes;
 
   void serialize(ISerializer& s);
 };
@@ -69,7 +69,7 @@ struct CachedBlockInfo {
 };
 
 struct OutputGlobalIndexesForAmount {
-  uint32_t startIndex = 0;
+  uint64_t startIndex = 0;
 
   // 1. This container must be sorted by PackedOutIndex::blockIndex and PackedOutIndex::transactionIndex
   // 2. GlobalOutputIndex for particular output is calculated as following: startIndex + index in vector
@@ -91,11 +91,11 @@ class DatabaseBlockchainCache;
 
 class BlockchainCache : public IBlockchainCache {
 public:
-  BlockchainCache(const std::string& filename, const Currency& currency, std::shared_ptr<Logging::ILogger> logger, IBlockchainCache* parent, uint32_t startIndex = 0);
+  BlockchainCache(const std::string& filename, const Currency& currency, std::shared_ptr<Logging::ILogger> logger, IBlockchainCache* parent, uint64_t startIndex = 0);
 
   //Returns upper part of segment. [this] remains lower part.
   //All of indexes on blockIndex == splitBlockIndex belong to upper part
-  std::unique_ptr<IBlockchainCache> split(uint32_t splitBlockIndex) override;
+  std::unique_ptr<IBlockchainCache> split(uint64_t splitBlockIndex) override;
   virtual void pushBlock(const CachedBlock& cachedBlock,
     const std::vector<CachedTransaction>& cachedTransactions,
     const TransactionValidatorState& validatorState,
@@ -104,63 +104,63 @@ public:
     uint64_t blockDifficulty,
     RawBlock&& rawBlock) override;
 
-  virtual PushedBlockInfo getPushedBlockInfo(uint32_t index) const override;
-  bool checkIfSpent(const Crypto::KeyImage& keyImage, uint32_t blockIndex) const override;
+  virtual PushedBlockInfo getPushedBlockInfo(uint64_t index) const override;
+  bool checkIfSpent(const Crypto::KeyImage& keyImage, uint64_t blockIndex) const override;
   bool checkIfSpent(const Crypto::KeyImage& keyImage) const override;
   
   bool isTransactionSpendTimeUnlocked(uint64_t unlockTime) const override;
-  bool isTransactionSpendTimeUnlocked(uint64_t unlockTime, uint32_t blockIndex) const override;
+  bool isTransactionSpendTimeUnlocked(uint64_t unlockTime, uint64_t blockIndex) const override;
 
-  ExtractOutputKeysResult extractKeyOutputKeys(uint64_t amount, Common::ArrayView<uint32_t> globalIndexes, std::vector<Crypto::PublicKey>& publicKeys) const override;
-  ExtractOutputKeysResult extractKeyOutputKeys(uint64_t amount, uint32_t blockIndex, Common::ArrayView<uint32_t> globalIndexes, std::vector<Crypto::PublicKey>& publicKeys) const override;
+  ExtractOutputKeysResult extractKeyOutputKeys(uint64_t amount, Common::ArrayView<uint64_t> globalIndexes, std::vector<Crypto::PublicKey>& publicKeys) const override;
+  ExtractOutputKeysResult extractKeyOutputKeys(uint64_t amount, uint64_t blockIndex, Common::ArrayView<uint64_t> globalIndexes, std::vector<Crypto::PublicKey>& publicKeys) const override;
 
-  ExtractOutputKeysResult extractKeyOtputIndexes(uint64_t amount, Common::ArrayView<uint32_t> globalIndexes, std::vector<PackedOutIndex>& outIndexes) const override;
-  ExtractOutputKeysResult extractKeyOtputReferences(uint64_t amount, Common::ArrayView<uint32_t> globalIndexes, std::vector<std::pair<Crypto::Hash, size_t>>& outputReferences) const override;
+  ExtractOutputKeysResult extractKeyOtputIndexes(uint64_t amount, Common::ArrayView<uint64_t> globalIndexes, std::vector<PackedOutIndex>& outIndexes) const override;
+  ExtractOutputKeysResult extractKeyOtputReferences(uint64_t amount, Common::ArrayView<uint64_t> globalIndexes, std::vector<std::pair<Crypto::Hash, size_t>>& outputReferences) const override;
 
-  uint32_t getTopBlockIndex() const override;
+  uint64_t getTopBlockIndex() const override;
   const Crypto::Hash& getTopBlockHash() const override;
-  uint32_t getBlockCount() const override;
+  uint64_t getBlockCount() const override;
   bool hasBlock(const Crypto::Hash& blockHash) const override;
-  uint32_t getBlockIndex(const Crypto::Hash& blockHash) const override;
+  uint64_t getBlockIndex(const Crypto::Hash& blockHash) const override;
 
   bool hasTransaction(const Crypto::Hash& transactionHash) const override;
 
   std::vector<uint64_t> getLastTimestamps(size_t count) const override;
-  std::vector<uint64_t> getLastTimestamps(size_t count, uint32_t blockIndex, UseGenesis) const override;
+  std::vector<uint64_t> getLastTimestamps(size_t count, uint64_t blockIndex, UseGenesis) const override;
 
   std::vector<uint64_t> getLastBlocksSizes(size_t count) const override;
-  std::vector<uint64_t> getLastBlocksSizes(size_t count, uint32_t blockIndex, UseGenesis) const override;
+  std::vector<uint64_t> getLastBlocksSizes(size_t count, uint64_t blockIndex, UseGenesis) const override;
 
-  std::vector<uint64_t> getLastCumulativeDifficulties(size_t count, uint32_t blockIndex, UseGenesis) const override;
+  std::vector<uint64_t> getLastCumulativeDifficulties(size_t count, uint64_t blockIndex, UseGenesis) const override;
   std::vector<uint64_t> getLastCumulativeDifficulties(size_t count) const override;
 
   uint64_t getDifficultyForNextBlock() const override;
-  uint64_t getDifficultyForNextBlock(uint32_t blockIndex) const override;
+  uint64_t getDifficultyForNextBlock(uint64_t blockIndex) const override;
 
   virtual uint64_t getCurrentCumulativeDifficulty() const override;
-  virtual uint64_t getCurrentCumulativeDifficulty(uint32_t blockIndex) const override;
+  virtual uint64_t getCurrentCumulativeDifficulty(uint64_t blockIndex) const override;
 
   uint64_t getAlreadyGeneratedCoins() const override;
-  uint64_t getAlreadyGeneratedCoins(uint32_t blockIndex) const override;
-  uint64_t getAlreadyGeneratedTransactions(uint32_t blockIndex) const override;
-  std::vector<uint64_t> getLastUnits(size_t count, uint32_t blockIndex, UseGenesis use,
+  uint64_t getAlreadyGeneratedCoins(uint64_t blockIndex) const override;
+  uint64_t getAlreadyGeneratedTransactions(uint64_t blockIndex) const override;
+  std::vector<uint64_t> getLastUnits(size_t count, uint64_t blockIndex, UseGenesis use,
                                    std::function<uint64_t(const CachedBlockInfo&)> pred) const override;
 
-  Crypto::Hash getBlockHash(uint32_t blockIndex) const override;  
-  virtual std::vector<Crypto::Hash> getBlockHashes(uint32_t startIndex, size_t maxCount) const override;
+  Crypto::Hash getBlockHash(uint64_t blockIndex) const override;  
+  virtual std::vector<Crypto::Hash> getBlockHashes(uint64_t startIndex, size_t maxCount) const override;
 
   virtual IBlockchainCache* getParent() const override;
   virtual void setParent(IBlockchainCache* p) override;
-  virtual uint32_t getStartBlockIndex() const override;
+  virtual uint64_t getStartBlockIndex() const override;
 
-  virtual size_t getKeyOutputsCountForAmount(uint64_t amount, uint32_t blockIndex) const override;
+  virtual size_t getKeyOutputsCountForAmount(uint64_t amount, uint64_t blockIndex) const override;
 
   std::tuple<bool, uint64_t> getBlockHeightForTimestamp(uint64_t timestamp) const override;
 
-  virtual uint32_t getTimestampLowerBoundBlockIndex(uint64_t timestamp) const override;
-  virtual bool getTransactionGlobalIndexes(const Crypto::Hash& transactionHash, std::vector<uint32_t>& globalIndexes) const override;
+  virtual uint64_t getTimestampLowerBoundBlockIndex(uint64_t timestamp) const override;
+  virtual bool getTransactionGlobalIndexes(const Crypto::Hash& transactionHash, std::vector<uint64_t>& globalIndexes) const override;
   virtual size_t getTransactionCount() const override;
-  virtual uint32_t getBlockIndexContainingTx(const Crypto::Hash& transactionHash) const override;
+  virtual uint64_t getBlockIndexContainingTx(const Crypto::Hash& transactionHash) const override;
 
   virtual size_t getChildCount() const override;
   virtual void addChild(IBlockchainCache* child) override;
@@ -179,13 +179,13 @@ public:
   virtual std::unordered_map<Crypto::Hash, std::vector<uint64_t>> getGlobalIndexes(
     const std::vector<Crypto::Hash> transactionHashes) const override;
 
-  virtual RawBlock getBlockByIndex(uint32_t index) const override;
-  virtual BinaryArray getRawTransaction(uint32_t blockIndex, uint32_t transactionIndex) const override;
+  virtual RawBlock getBlockByIndex(uint64_t index) const override;
+  virtual BinaryArray getRawTransaction(uint64_t blockIndex, uint32_t transactionIndex) const override;
   virtual std::vector<Crypto::Hash> getTransactionHashes() const override;
-  virtual std::vector<uint32_t> getRandomOutsByAmount(uint64_t amount, size_t count, uint32_t blockIndex) const override;
-  virtual ExtractOutputKeysResult extractKeyOutputs(uint64_t amount, uint32_t blockIndex, Common::ArrayView<uint32_t> globalIndexes,
+  virtual std::vector<uint32_t> getRandomOutsByAmount(uint64_t amount, size_t count, uint64_t blockIndex) const override;
+  virtual ExtractOutputKeysResult extractKeyOutputs(uint64_t amount, uint64_t blockIndex, Common::ArrayView<uint64_t> globalIndexes,
     std::function<ExtractOutputKeysResult(const CachedTransactionInfo& info, PackedOutIndex index,
-    uint32_t globalIndex)> pred) const override;
+    uint64_t globalIndex)> pred) const override;
 
   virtual std::vector<Crypto::Hash> getTransactionHashesByPaymentId(const Crypto::Hash& paymentId) const override;
   virtual std::vector<Crypto::Hash> getBlockHashesByTimestamps(uint64_t timestampBegin, size_t secondsCount) const override;
@@ -210,7 +210,7 @@ private:
     boost::multi_index::indexed_by<
       boost::multi_index::ordered_non_unique<
         boost::multi_index::tag<BlockIndexTag>,
-        BOOST_MULTI_INDEX_MEMBER(SpentKeyImage, uint32_t, blockIndex)
+        BOOST_MULTI_INDEX_MEMBER(SpentKeyImage, uint64_t, blockIndex)
       >,
       boost::multi_index::hashed_unique<
         boost::multi_index::tag<KeyImageTag>,
@@ -226,13 +226,13 @@ private:
         boost::multi_index::tag<TransactionInBlockTag>,
         boost::multi_index::composite_key<
           CachedTransactionInfo,
-          BOOST_MULTI_INDEX_MEMBER(CachedTransactionInfo, uint32_t, blockIndex),
+          BOOST_MULTI_INDEX_MEMBER(CachedTransactionInfo, uint64_t, blockIndex),
           BOOST_MULTI_INDEX_MEMBER(CachedTransactionInfo, uint32_t, transactionIndex)
         >
       >,
       boost::multi_index::ordered_non_unique<
         boost::multi_index::tag<BlockIndexTag>,
-        BOOST_MULTI_INDEX_MEMBER(CachedTransactionInfo, uint32_t, blockIndex)
+        BOOST_MULTI_INDEX_MEMBER(CachedTransactionInfo, uint64_t, blockIndex)
       >,
       boost::multi_index::hashed_unique<
         boost::multi_index::tag<TransactionHashTag>,
@@ -283,7 +283,7 @@ private:
   Logging::LoggerRef logger;
   IBlockchainCache* parent;
   // index of first block stored in this cache
-  uint32_t startIndex;
+  uint64_t startIndex;
 
   TransactionsCacheContainer transactions;
   SpentKeyImagesContainer spentKeyImages;
@@ -296,16 +296,16 @@ private:
  
   void serialize(ISerializer& s);
 
-  void addSpentKeyImage(const Crypto::KeyImage& keyImage, uint32_t blockIndex);
-  void pushTransaction(const CachedTransaction& tx, uint32_t blockIndex, uint16_t transactionBlockIndex);
+  void addSpentKeyImage(const Crypto::KeyImage& keyImage, uint64_t blockIndex);
+  void pushTransaction(const CachedTransaction& tx, uint64_t blockIndex, uint16_t transactionBlockIndex);
 
-  void splitSpentKeyImages(BlockchainCache& newCache, uint32_t splitBlockIndex);
-  void splitTransactions(BlockchainCache& newCache, uint32_t splitBlockIndex);
-  void splitBlocks(BlockchainCache& newCache, uint32_t splitBlockIndex);
-  void splitKeyOutputsGlobalIndexes(BlockchainCache& newCache, uint32_t splitBlockIndex);
+  void splitSpentKeyImages(BlockchainCache& newCache, uint64_t splitBlockIndex);
+  void splitTransactions(BlockchainCache& newCache, uint64_t splitBlockIndex);
+  void splitBlocks(BlockchainCache& newCache, uint64_t splitBlockIndex);
+  void splitKeyOutputsGlobalIndexes(BlockchainCache& newCache, uint64_t splitBlockIndex);
   void removePaymentId(const Crypto::Hash& transactionHash, BlockchainCache& newCache);
 
-  uint32_t insertKeyOutputToGlobalIndex(uint64_t amount, PackedOutIndex output, uint32_t blockIndex);
+  uint64_t insertKeyOutputToGlobalIndex(uint64_t amount, PackedOutIndex output, uint64_t blockIndex);
 
   enum class OutputSearchResult : uint8_t {
     FOUND,
@@ -313,9 +313,9 @@ private:
     INVALID_ARGUMENT
   };
 
-  TransactionValidatorState fillOutputsSpentByBlock(uint32_t blockIndex) const;
+  TransactionValidatorState fillOutputsSpentByBlock(uint64_t blockIndex) const;
 
-uint8_t getBlockMajorVersionForHeight(uint32_t height) const;
+uint8_t getBlockMajorVersionForHeight(uint64_t height) const;
   void fixChildrenParent(IBlockchainCache* p);
 
   void doPushBlock(const CachedBlock& cachedBlock,

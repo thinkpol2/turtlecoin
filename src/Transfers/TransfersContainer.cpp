@@ -557,7 +557,7 @@ void TransfersContainer::copyToSpent(const TransactionBlockInfo& block, const IT
   assert(result.second);
 }
 
-std::vector<Hash> TransfersContainer::detach(uint32_t height) {
+std::vector<Hash> TransfersContainer::detach(uint64_t height) {
   // This method expects that WALLET_UNCONFIRMED_TRANSACTION_HEIGHT is a big positive number
   assert(height < WALLET_UNCONFIRMED_TRANSACTION_HEIGHT);
 
@@ -647,7 +647,7 @@ void TransfersContainer::updateTransfersVisibility(const KeyImage& keyImage) {
   }
 }
 
-bool TransfersContainer::advanceHeight(uint32_t height) {
+bool TransfersContainer::advanceHeight(uint64_t height) {
   std::lock_guard<std::mutex> lk(m_mutex);
 
   if (m_currentHeight <= height) {
@@ -833,7 +833,7 @@ void TransfersContainer::load(std::istream& in) {
     throw std::runtime_error(message);
   }
 
-  uint32_t currentHeight = 0;
+  uint64_t currentHeight = 0;
   TransactionMultiIndex transactions;
   UnconfirmedTransfersMultiIndex unconfirmedTransfers;
   AvailableTransfersMultiIndex availableTransfers;

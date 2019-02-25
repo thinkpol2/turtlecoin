@@ -375,12 +375,12 @@ void BlockchainSynchronizer::stop() {
   m_logger(INFO, BRIGHT_WHITE) << "Stopped";
 }
 
-void BlockchainSynchronizer::localBlockchainUpdated(uint32_t height) {
+void BlockchainSynchronizer::localBlockchainUpdated(uint64_t height) {
   m_logger(DEBUGGING) << "Event: localBlockchainUpdated " << height;
   setFutureState(State::blockchainSync);
 }
 
-void BlockchainSynchronizer::lastKnownBlockHeightUpdated(uint32_t height) {
+void BlockchainSynchronizer::lastKnownBlockHeightUpdated(uint64_t height) {
   m_logger(DEBUGGING) << "Event: lastKnownBlockHeightUpdated " << height;
   setFutureState(State::blockchainSync);
 }
@@ -520,7 +520,7 @@ void BlockchainSynchronizer::processBlocks(GetBlocksResponse& response) {
     blocks.push_back(std::move(completeBlock));
   }
 
-  uint32_t processedBlockCount = response.startHeight + static_cast<uint32_t>(response.newBlocks.size());
+  uint64_t processedBlockCount = response.startHeight + static_cast<uint64_t>(response.newBlocks.size());
   if (!checkIfShouldStop()) {
     response.newBlocks.clear();
     std::unique_lock<std::mutex> lk(m_consumersMutex);
@@ -564,7 +564,7 @@ BlockchainSynchronizer::UpdateConsumersResult BlockchainSynchronizer::updateCons
   bool smthChanged = false;
   bool hasErrors = false;
 
-  uint32_t lastBlockIndex = std::numeric_limits<uint32_t>::max();
+  uint64_t lastBlockIndex = std::numeric_limits<uint64_t>::max();
   for (auto& kv : m_consumers) {
     auto result = kv.second->checkInterval(interval);
 
@@ -578,14 +578,14 @@ BlockchainSynchronizer::UpdateConsumersResult BlockchainSynchronizer::updateCons
       result.newBlockHeight = 0;
     }
     if (result.hasNewBlocks) {
-      uint32_t startOffset = result.newBlockHeight - interval.startHeight;
+      uint64_t startOffset = result.newBlockHeight - interval.startHeight;
     if (result.newBlockHeight == 0) {
       startOffset = 0;
     }
-      uint32_t blockCount = static_cast<uint32_t>(blocks.size()) - startOffset;
+      uint64_t blockCount = static_cast<uint32_t>(blocks.size()) - startOffset;
       // update consumer
       m_logger(DEBUGGING) << "Adding blocks to consumer, consumer " << kv.first << ", start index " << result.newBlockHeight << ", count " << blockCount;
-      uint32_t addedCount = kv.first->onNewBlocks(blocks.data() + startOffset, result.newBlockHeight, blockCount);
+      uint64_t addedCount = kv.first->onNewBlocks(blocks.data() + startOffset, result.newBlockHeight, blockCount);
       if (addedCount > 0) {
         if (addedCount < blockCount) {
           m_logger(ERROR, BRIGHT_RED) << "Failed to add " << (blockCount - addedCount) << " blocks of " << blockCount << " to consumer, consumer " << kv.first;
@@ -606,7 +606,7 @@ BlockchainSynchronizer::UpdateConsumersResult BlockchainSynchronizer::updateCons
     }
   }
 
-  if (lastBlockIndex != std::numeric_limits<uint32_t>::max()) {
+  if (lastBlockIndex != std::numeric_limits<uint64_t>::max()) {
     assert(lastBlockIndex < blocks.size());
     lastBlockId = blocks[lastBlockIndex].blockHash;
     m_logger(DEBUGGING) << "Last block hash " << lastBlockId << ", index " << (interval.startHeight + lastBlockIndex);

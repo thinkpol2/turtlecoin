@@ -32,9 +32,9 @@ public:
 
   struct CheckResult {
     bool detachRequired;
-    uint32_t detachHeight;
+    uint64_t detachHeight;
     bool hasNewBlocks;
-    uint32_t newBlockHeight;
+    uint64_t newBlockHeight;
   };
 
   typedef std::vector<Crypto::Hash> ShortHistory;
@@ -43,12 +43,12 @@ public:
     m_blockchain.push_back(genesisBlockHash);
   }
 
-  ShortHistory getShortHistory(uint32_t localHeight) const;
+  ShortHistory getShortHistory(uint64_t localHeight) const;
   CheckResult checkInterval(const BlockchainInterval& interval) const;
 
-  void detach(uint32_t height);
-  void addBlocks(const Crypto::Hash* blockHashes, uint32_t height, uint32_t count);
-  uint32_t getHeight() const;
+  void detach(uint64_t height);
+  void addBlocks(const Crypto::Hash* blockHashes, uint64_t height, uint32_t count);
+  uint64_t getHeight() const;
   const std::vector<Crypto::Hash>& getKnownBlockHashes() const;
 
   // IStreamSerializable

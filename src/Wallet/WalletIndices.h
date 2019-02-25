@@ -78,7 +78,7 @@ typedef boost::multi_index_container <
 > WalletsContainer;
 
 struct UnlockTransactionJob {
-  uint32_t blockHeight;
+  uint64_t blockHeight;
   CryptoNote::ITransfersContainer* container;
   Crypto::Hash transactionHash;
 };
@@ -87,7 +87,7 @@ typedef boost::multi_index_container <
   UnlockTransactionJob,
   boost::multi_index::indexed_by <
     boost::multi_index::ordered_non_unique < boost::multi_index::tag <BlockHeightIndex>,
-    BOOST_MULTI_INDEX_MEMBER(UnlockTransactionJob, uint32_t, blockHeight)
+    BOOST_MULTI_INDEX_MEMBER(UnlockTransactionJob, uint64_t, blockHeight)
     >,
     boost::multi_index::hashed_non_unique < boost::multi_index::tag <TransactionHashIndex>,
       BOOST_MULTI_INDEX_MEMBER(UnlockTransactionJob, Crypto::Hash, transactionHash)
@@ -103,7 +103,7 @@ typedef boost::multi_index_container <
       boost::multi_index::member<CryptoNote::WalletTransaction, Crypto::Hash, &CryptoNote::WalletTransaction::hash >
     >,
     boost::multi_index::ordered_non_unique < boost::multi_index::tag <BlockHeightIndex>,
-      boost::multi_index::member<CryptoNote::WalletTransaction, uint32_t, &CryptoNote::WalletTransaction::blockHeight >
+      boost::multi_index::member<CryptoNote::WalletTransaction, uint64_t, &CryptoNote::WalletTransaction::blockHeight >
     >
   >
 > WalletTransactions;

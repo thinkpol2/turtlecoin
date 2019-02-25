@@ -188,7 +188,7 @@ SynchronizationStart TransfersConsumer::getSyncStart() {
   return m_syncStart;
 }
 
-void TransfersConsumer::onBlockchainDetach(uint32_t height) {
+void TransfersConsumer::onBlockchainDetach(uint64_t height) {
   m_observerManager.notify(&IBlockchainConsumerObserver::onBlockchainDetach, this, height);
 
   for (const auto& kv : m_subscriptions) {
@@ -196,7 +196,7 @@ void TransfersConsumer::onBlockchainDetach(uint32_t height) {
   }
 }
 
-uint32_t TransfersConsumer::onNewBlocks(const CompleteBlock* blocks, uint32_t startHeight, uint32_t count) {
+uint64_t TransfersConsumer::onNewBlocks(const CompleteBlock* blocks, uint64_t startHeight, uint32_t count) {
   assert(blocks);
   assert(count > 0);
 
@@ -312,7 +312,7 @@ uint32_t TransfersConsumer::onNewBlocks(const CompleteBlock* blocks, uint32_t st
     return std::tie(a.blockInfo.height, a.blockInfo.transactionIndex) < std::tie(b.blockInfo.height, b.blockInfo.transactionIndex);
   });
 
-  uint32_t processedBlockCount = static_cast<uint32_t>(emptyBlockCount);
+  uint64_t processedBlockCount = static_cast<uint64_t>(emptyBlockCount);
   try {
     for (const auto& tx : preprocessedTransactions) {
       processTransaction(tx.blockInfo, *tx.tx, tx);
@@ -343,7 +343,7 @@ uint32_t TransfersConsumer::onNewBlocks(const CompleteBlock* blocks, uint32_t st
   }
 
   if (processedBlockCount < count) {
-    uint32_t detachIndex = startHeight + processedBlockCount;
+    uint64_t detachIndex = startHeight + processedBlockCount;
     m_logger(ERROR, BRIGHT_RED) << "Not all block transactions are processed, fully processed block count: " << processedBlockCount << " of " << count <<
         ", last processed block hash " << (processedBlockCount > 0 ? blocks[processedBlockCount - 1].blockHash : NULL_HASH) <<
         ", detach block index " << detachIndex << " to remove partially processed block";

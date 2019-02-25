@@ -35,7 +35,7 @@ struct CompleteBlock;
 
 class IBlockchainSynchronizerObserver {
 public:
-  virtual void synchronizationProgressUpdated(uint32_t processedBlockCount, uint32_t totalBlockCount) {}
+  virtual void synchronizationProgressUpdated(uint64_t processedBlockCount, uint64_t totalBlockCount) {}
   virtual void synchronizationCompleted(std::error_code result) {}
 };
 
@@ -46,8 +46,8 @@ public:
   virtual ~IBlockchainConsumer() {}
   virtual SynchronizationStart getSyncStart() = 0;
   virtual const std::unordered_set<Crypto::Hash>& getKnownPoolTxIds() const = 0;
-  virtual void onBlockchainDetach(uint32_t height) = 0;
-  virtual uint32_t onNewBlocks(const CompleteBlock* blocks, uint32_t startHeight, uint32_t count) = 0;
+  virtual void onBlockchainDetach(uint64_t height) = 0;
+  virtual uint64_t onNewBlocks(const CompleteBlock* blocks, uint64_t startHeight, uint32_t count) = 0;
   virtual std::error_code onPoolUpdated(const std::vector<std::unique_ptr<ITransactionReader>>& addedTransactions, const std::vector<Crypto::Hash>& deletedTransactions) = 0;
 
   virtual std::error_code addUnconfirmedTransaction(const ITransactionReader& transaction) = 0;
@@ -57,7 +57,7 @@ public:
 class IBlockchainConsumerObserver {
 public:
   virtual void onBlocksAdded(IBlockchainConsumer* consumer, const std::vector<Crypto::Hash>& blockHashes) {}
-  virtual void onBlockchainDetach(IBlockchainConsumer* consumer, uint32_t blockIndex) {}
+  virtual void onBlockchainDetach(IBlockchainConsumer* consumer, uint64_t blockIndex) {}
   virtual void onTransactionDeleteBegin(IBlockchainConsumer* consumer, Crypto::Hash transactionHash) {}
   virtual void onTransactionDeleteEnd(IBlockchainConsumer* consumer, Crypto::Hash transactionHash) {}
   virtual void onTransactionUpdated(IBlockchainConsumer* consumer, const Crypto::Hash& transactionHash, const std::vector<ITransfersContainer*>& containers) {}

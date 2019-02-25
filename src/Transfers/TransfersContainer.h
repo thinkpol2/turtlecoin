@@ -76,7 +76,7 @@ struct TransactionOutputInformationIn : public TransactionOutputInformation {
 
 struct TransactionOutputInformationEx : public TransactionOutputInformationIn {
   uint64_t unlockTime;
-  uint32_t blockHeight;
+  uint64_t blockHeight;
   uint32_t transactionIndex;
   bool visible;
 
@@ -104,7 +104,7 @@ struct TransactionOutputInformationEx : public TransactionOutputInformationIn {
 };
 
 struct TransactionBlockInfo {
-  uint32_t height;
+  uint64_t height;
   uint64_t timestamp;
   uint32_t transactionIndex;
 
@@ -151,8 +151,8 @@ public:
   bool deleteUnconfirmedTransaction(const Crypto::Hash& transactionHash);
   bool markTransactionConfirmed(const TransactionBlockInfo& block, const Crypto::Hash& transactionHash, const std::vector<uint32_t>& globalIndices);
 
-  std::vector<Crypto::Hash> detach(uint32_t height);
-  bool advanceHeight(uint32_t height);
+  std::vector<Crypto::Hash> detach(uint64_t height);
+  bool advanceHeight(uint64_t height);
 
   // ITransfersContainer
   virtual size_t transactionsCount() const override;
@@ -178,7 +178,7 @@ private:
     TransactionInformation,
     boost::multi_index::indexed_by<
       boost::multi_index::hashed_unique<BOOST_MULTI_INDEX_MEMBER(TransactionInformation, Crypto::Hash, transactionHash)>,
-      boost::multi_index::ordered_non_unique<BOOST_MULTI_INDEX_MEMBER(TransactionInformation, uint32_t, blockHeight)>
+      boost::multi_index::ordered_non_unique<BOOST_MULTI_INDEX_MEMBER(TransactionInformation, uint64_t, blockHeight)>
     >
   > TransactionMultiIndex;
 
@@ -271,7 +271,7 @@ private:
   AvailableTransfersMultiIndex m_availableTransfers;
   SpentTransfersMultiIndex m_spentTransfers;
 
-  uint32_t m_currentHeight; // current height is needed to check if a transfer is unlocked
+  uint64_t m_currentHeight; // current height is needed to check if a transfer is unlocked
   size_t m_transactionSpendableAge;
   const CryptoNote::Currency& m_currency;
   mutable std::mutex m_mutex;

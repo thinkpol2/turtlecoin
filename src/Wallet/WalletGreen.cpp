@@ -78,7 +78,7 @@ CryptoNote::WalletEvent makeMoneyUnlockedEvent() {
   return event;
 }
 
-CryptoNote::WalletEvent makeSyncProgressUpdatedEvent(uint32_t current, uint32_t total) {
+CryptoNote::WalletEvent makeSyncProgressUpdatedEvent(uint64_t current, uint64_t total) {
   CryptoNote::WalletEvent event;
   event.type = CryptoNote::WalletEventType::SYNC_PROGRESS_UPDATED;
   event.synchronizationProgressUpdated.processedBlockCount = current;
@@ -2589,18 +2589,18 @@ std::vector<TransactionsInBlockInfo> WalletGreen::getTransactions(const Crypto::
 
   auto heightIt = m_blockchain.project<BlockHeightIndex>(it);
 
-  uint32_t blockIndex = static_cast<uint32_t>(std::distance(m_blockchain.get<BlockHeightIndex>().begin(), heightIt));
+  uint64_t blockIndex = static_cast<uint64_t>(std::distance(m_blockchain.get<BlockHeightIndex>().begin(), heightIt));
   return getTransactionsInBlocks(blockIndex, count);
 }
 
-std::vector<TransactionsInBlockInfo> WalletGreen::getTransactions(uint32_t blockIndex, size_t count) const {
+std::vector<TransactionsInBlockInfo> WalletGreen::getTransactions(uint64_t blockIndex, size_t count) const {
   throwIfNotInitialized();
   throwIfStopped();
 
   return getTransactionsInBlocks(blockIndex, count);
 }
 
-std::vector<Crypto::Hash> WalletGreen::getBlockHashes(uint32_t blockIndex, size_t count) const {
+std::vector<Crypto::Hash> WalletGreen::getBlockHashes(uint64_t blockIndex, size_t count) const {
   throwIfNotInitialized();
   throwIfStopped();
 
@@ -2615,11 +2615,11 @@ std::vector<Crypto::Hash> WalletGreen::getBlockHashes(uint32_t blockIndex, size_
   return std::vector<Crypto::Hash>(start, end);
 }
 
-uint32_t WalletGreen::getBlockCount() const {
+uint64_t WalletGreen::getBlockCount() const {
   throwIfNotInitialized();
   throwIfStopped();
 
-  uint32_t blockCount = static_cast<uint32_t>(m_blockchain.size());
+  uint64_t blockCount = static_cast<uint64_t>(m_blockchain.size());
   assert(blockCount != 0);
 
   return blockCount;
@@ -2695,11 +2695,11 @@ void WalletGreen::throwIfNotInitialized() const {
   }
 }
 
-void WalletGreen::onError(ITransfersSubscription* object, uint32_t height, std::error_code ec) {
+void WalletGreen::onError(ITransfersSubscription* object, uint64_t height, std::error_code ec) {
   m_logger(ERROR, BRIGHT_RED) << "Synchronization error: " << ec << ", " << ec.message() << ", height " << height;
 }
 
-void WalletGreen::synchronizationProgressUpdated(uint32_t processedBlockCount, uint32_t totalBlockCount) {
+void WalletGreen::synchronizationProgressUpdated(uint64_t processedBlockCount, uint64_t totalBlockCount) {
   m_dispatcher.remoteSpawn([processedBlockCount, totalBlockCount, this]() { onSynchronizationProgressUpdated(processedBlockCount, totalBlockCount); });
 }
 
@@ -2707,7 +2707,7 @@ void WalletGreen::synchronizationCompleted(std::error_code result) {
   m_dispatcher.remoteSpawn([this]() { onSynchronizationCompleted(); });
 }
 
-void WalletGreen::onSynchronizationProgressUpdated(uint32_t processedBlockCount, uint32_t totalBlockCount) {
+void WalletGreen::onSynchronizationProgressUpdated(uint64_t processedBlockCount, uint64_t totalBlockCount) {
   assert(processedBlockCount > 0);
 
   System::EventLock lk(m_readyEvent);
@@ -2720,7 +2720,7 @@ void WalletGreen::onSynchronizationProgressUpdated(uint32_t processedBlockCount,
 
   pushEvent(makeSyncProgressUpdatedEvent(processedBlockCount, totalBlockCount));
 
-  uint32_t currentHeight = processedBlockCount - 1;
+  uint64_t currentHeight = processedBlockCount - 1;
   unlockBalances(currentHeight);
 }
 
@@ -2750,11 +2750,11 @@ void WalletGreen::blocksAdded(const std::vector<Crypto::Hash>& blockHashes) {
   m_blockchain.insert(m_blockchain.end(), blockHashes.begin(), blockHashes.end());
 }
 
-void WalletGreen::onBlockchainDetach(const Crypto::PublicKey& viewPublicKey, uint32_t blockIndex) {
+void WalletGreen::onBlockchainDetach(const Crypto::PublicKey& viewPublicKey, uint64_t blockIndex) {
   m_dispatcher.remoteSpawn([this, blockIndex] () { blocksRollback(blockIndex); } );
 }
 
-void WalletGreen::blocksRollback(uint32_t blockIndex) {
+void WalletGreen::blocksRollback(uint64_t blockIndex) {
   System::EventLock lk(m_readyEvent);
 
   m_logger(TRACE) << "blocksRollback " << blockIndex;
@@ -2785,7 +2785,7 @@ void WalletGreen::transactionDeleteEnd(Crypto::Hash transactionHash) {
   m_logger(TRACE) << "transactionDeleteEnd " << transactionHash;
 }
 
-void WalletGreen::unlockBalances(uint32_t height) {
+void WalletGreen::unlockBalances(uint64_t height) {
   auto& index = m_unlockTransactionsJob.get<BlockHeightIndex>();
   auto upper = index.upper_bound(height);
 
@@ -2870,7 +2870,7 @@ void WalletGreen::transactionUpdated(const TransactionInformation& transactionIn
     updateBalance(containerAmounts.container);
 
     if (transactionInfo.blockHeight != CryptoNote::WALLET_UNCONFIRMED_TRANSACTION_HEIGHT) {
-      uint32_t unlockHeight = std::max(transactionInfo.blockHeight + m_transactionSoftLockTime, static_cast<uint32_t>(transactionInfo.unlockTime));
+      uint64_t unlockHeight = std::max(transactionInfo.blockHeight + m_transactionSoftLockTime, static_cast<uint64_t>(transactionInfo.unlockTime));
       insertUnlockTransactionJob(transactionInfo.transactionHash, unlockHeight, containerAmounts.container);
     }
   }
@@ -2967,7 +2967,7 @@ void WalletGreen::transactionDeleted(ITransfersSubscription* object, const Hash&
   }
 }
 
-void WalletGreen::insertUnlockTransactionJob(const Hash& transactionHash, uint32_t blockHeight, CryptoNote::ITransfersContainer* container) {
+void WalletGreen::insertUnlockTransactionJob(const Hash& transactionHash, uint64_t blockHeight, CryptoNote::ITransfersContainer* container) {
   auto& index = m_unlockTransactionsJob.get<BlockHeightIndex>();
   index.insert( { blockHeight, container, transactionHash } );
 }
@@ -3163,7 +3163,7 @@ size_t WalletGreen::createFusionTransaction(uint64_t threshold, uint16_t mixin,
 
   const size_t MAX_FUSION_OUTPUT_COUNT = 4;
 
-  uint32_t height = m_node.getLastKnownBlockHeight();
+  uint64_t height = m_node.getLastKnownBlockHeight();
 
   if (threshold <= m_currency.defaultFusionDustThreshold(height)) {
     m_logger(ERROR, BRIGHT_RED) << "Fusion transaction threshold is too small. Threshold " << m_currency.formatAmount(threshold) <<
@@ -3412,7 +3412,7 @@ std::vector<WalletGreen::OutputToTransfer> WalletGreen::pickRandomFusionInputs(c
   return trimmedSelectedOuts;
 }
 
-std::vector<TransactionsInBlockInfo> WalletGreen::getTransactionsInBlocks(uint32_t blockIndex, size_t count) const {
+std::vector<TransactionsInBlockInfo> WalletGreen::getTransactionsInBlocks(uint64_t blockIndex, size_t count) const {
   if (count == 0) {
     m_logger(ERROR, BRIGHT_RED) << "Bad argument: block count must be greater than zero";
     throw std::system_error(make_error_code(error::WRONG_PARAMETERS), "blocks count must be greater than zero");
@@ -3430,9 +3430,9 @@ std::vector<TransactionsInBlockInfo> WalletGreen::getTransactionsInBlocks(uint32
   }
 
   auto& blockHeightIndex = m_transactions.get<BlockHeightIndex>();
-  uint32_t stopIndex = static_cast<uint32_t>(std::min(m_blockchain.size(), blockIndex + count));
+  uint64_t stopIndex = static_cast<uint64_t>(std::min(m_blockchain.size(), blockIndex + count));
 
-  for (uint32_t height = blockIndex; height < stopIndex; ++height) {
+  for (uint64_t height = blockIndex; height < stopIndex; ++height) {
     TransactionsInBlockInfo info;
     info.blockHash = m_blockchain[height-1];
 
@@ -3457,7 +3457,7 @@ std::vector<TransactionsInBlockInfo> WalletGreen::getTransactionsInBlocks(uint32
   return result;
 }
 
-Crypto::Hash WalletGreen::getBlockHashByIndex(uint32_t blockIndex) const {
+Crypto::Hash WalletGreen::getBlockHashByIndex(uint64_t blockIndex) const {
   assert(blockIndex < m_blockchain.size());
   return m_blockchain.get<BlockHeightIndex>()[blockIndex];
 }
@@ -3655,7 +3655,7 @@ void WalletGreen::deleteFromUncommitedTransactions(const std::vector<size_t>& de
 */
 size_t WalletGreen::getMaxTxSize()
 {
-    uint32_t currentHeight = m_node.getLastKnownBlockHeight();
+    uint64_t currentHeight = m_node.getLastKnownBlockHeight();
 
     size_t growth = (currentHeight * CryptoNote
                                    ::parameters

@@ -27,17 +27,17 @@ namespace CryptoNote {
 namespace Messages {
 // immutable messages
 struct NewBlock {
-  uint32_t blockIndex;
+  uint64_t blockIndex;
   Crypto::Hash blockHash;
 };
 
 struct NewAlternativeBlock {
-  uint32_t blockIndex;
+  uint64_t blockIndex;
   Crypto::Hash blockHash;
 };
 
 struct ChainSwitch {
-  uint32_t commonRootIndex;
+  uint64_t commonRootIndex;
   std::vector<Crypto::Hash> blocksFromCommonRoot;
 };
 
@@ -106,9 +106,9 @@ private:
 };
 
 // factory functions
-BlockchainMessage makeChainSwitchMessage(uint32_t index, std::vector<Crypto::Hash>&& hashes);
-BlockchainMessage makeNewAlternativeBlockMessage(uint32_t index, const Crypto::Hash& hash);
-BlockchainMessage makeNewBlockMessage(uint32_t index, const Crypto::Hash& hash);
+BlockchainMessage makeChainSwitchMessage(uint64_t index, std::vector<Crypto::Hash>&& hashes);
+BlockchainMessage makeNewAlternativeBlockMessage(uint64_t index, const Crypto::Hash& hash);
+BlockchainMessage makeNewBlockMessage(uint64_t index, const Crypto::Hash& hash);
 BlockchainMessage makeAddTransactionMessage(std::vector<Crypto::Hash>&& hash);
 BlockchainMessage makeDelTransactionMessage(std::vector<Crypto::Hash>&& hash, Messages::DeleteTransaction::Reason r);
 }

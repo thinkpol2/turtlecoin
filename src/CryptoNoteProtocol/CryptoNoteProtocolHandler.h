@@ -55,8 +55,8 @@ namespace CryptoNote
     bool process_payload_sync_data(const CORE_SYNC_DATA& hshd, CryptoNoteConnectionContext& context, bool is_inital);
     int handleCommand(bool is_notify, int command, const BinaryArray& in_buff, BinaryArray& buff_out, CryptoNoteConnectionContext& context, bool& handled);
     virtual size_t getPeerCount() const override;
-    virtual uint32_t getObservedHeight() const override;
-    virtual uint32_t getBlockchainHeight() const override;
+    virtual uint64_t getObservedHeight() const override;
+    virtual uint64_t getBlockchainHeight() const override;
     void requestMissingPoolTransactions(const CryptoNoteConnectionContext& context);
 
   private:
@@ -76,10 +76,10 @@ namespace CryptoNote
     virtual void relayTransactions(const std::vector<BinaryArray>& transactions) override;
 
     //----------------------------------------------------------------------------------
-    uint32_t get_current_blockchain_height();
+    uint64_t get_current_blockchain_height();
     bool request_missing_objects(CryptoNoteConnectionContext& context, bool check_having_blocks);
     bool on_connection_synchronized();
-    void updateObservedHeight(uint32_t peerHeight, const CryptoNoteConnectionContext& context);
+    void updateObservedHeight(uint64_t peerHeight, const CryptoNoteConnectionContext& context);
     void recalculateMaxObservedHeight(const CryptoNoteConnectionContext& context);
     int processObjects(CryptoNoteConnectionContext& context, std::vector<RawBlock>&& rawBlocks, const std::vector<CachedBlock>& cachedBlocks);
     Logging::LoggerRef logger;
@@ -99,10 +99,10 @@ private:
     std::atomic<bool> m_stop;
 
     mutable std::mutex m_observedHeightMutex;
-    uint32_t m_observedHeight;
+    uint64_t m_observedHeight;
     
     mutable std::mutex m_blockchainHeightMutex;
-    uint32_t m_blockchainHeight;
+    uint64_t m_blockchainHeight;
 
     std::atomic<size_t> m_peersCount;
     Tools::ObserverManager<ICryptoNoteProtocolObserver> m_observerManager;

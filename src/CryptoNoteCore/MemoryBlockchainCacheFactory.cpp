@@ -33,7 +33,7 @@ std::unique_ptr<IBlockchainCache> MemoryBlockchainCacheFactory::createRootBlockc
 std::unique_ptr<IBlockchainCache> MemoryBlockchainCacheFactory::createBlockchainCache(
     const Currency& currency,
     IBlockchainCache* parent,
-    uint32_t startIndex) {
+    uint64_t startIndex) {
 
   return std::unique_ptr<IBlockchainCache>(new BlockchainCache(filename, currency, logger, parent, startIndex));
 }
