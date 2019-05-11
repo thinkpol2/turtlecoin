@@ -1,5 +1,8 @@
+# Note: automake support is community-based. The maintaners do not use automake
+# internally.
+
 AC_INIT([Google C++ Mocking and Testing Frameworks],
-        [1.8.0],
+        [1.9.0],
         [googlemock@googlegroups.com],
         [googletest])
 

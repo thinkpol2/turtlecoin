@@ -1,11 +1,11 @@
 
 # Google Test #
 
-[![Build Status](https://travis-ci.org/google/googletest.svg?branch=master)](https://travis-ci.org/google/googletest)
+[![Build Status](https://api.travis-ci.org/google/googletest.svg?branch=master)](https://travis-ci.org/google/googletest)
 [![Build status](https://ci.appveyor.com/api/projects/status/4o38plt0xbo1ubc8/branch/master?svg=true)](https://ci.appveyor.com/project/GoogleTestAppVeyor/googletest/branch/master)
 
 **Future Plans**:
-* 1.8.x Release - the 1.8.x will be the last release that works with pre-C++11 compilers. The 1.8.x will not accept any requests for any new features and any bugfix requests will only be accepted if proven "critical"
+* 1.8.x Release - [the 1.8.x](https://github.com/google/googletest/releases/tag/release-1.8.1) is the last release that works with pre-C++11 compilers. The 1.8.x will not accept any requests for any new features and any bugfix requests will only be accepted if proven "critical"
 * Post 1.8.x - work to improve/cleanup/pay technical debt. When this work is completed there will be a 1.9.x tagged release
 * Post 1.9.x googletest will follow [Abseil Live at Head philosophy](https://abseil.io/about/philosophy)
 
@@ -16,10 +16,8 @@ This repository is a merger of the formerly separate GoogleTest and
 GoogleMock projects. These were so closely related that it makes sense to
 maintain and release them together.
 
-Please see the project page above for more information as well as the
-mailing list for questions, discussions, and development.  There is
-also an IRC channel on [OFTC](https://webchat.oftc.net/) (irc.oftc.net) #gtest available.  Please
-join us!
+Please subscribe to the mailing list at googletestframework@googlegroups.com for questions, discussions, and development.  
+There is also an IRC channel on [OFTC](https://webchat.oftc.net/) (irc.oftc.net) #gtest available.  
 
 Getting started information for **Google Test** is available in the
 [Google Test Primer](googletest/docs/primer.md) documentation.
@@ -54,6 +52,7 @@ Google test has been used on a variety of platforms:
   * MinGW
   * Windows Mobile
   * Symbian
+  * PlatformIO
 
 ## Who Is Using Google Test? ##
 
@@ -107,7 +106,7 @@ package (as described below):
   * GNU-compatible Make or gmake
   * POSIX-standard shell
   * POSIX(-2) Regular Expressions (regex.h)
-  * A C++98-standard-compliant compiler
+  * A C++11-standard-compliant compiler
 
 ### Windows Requirements ###
 
