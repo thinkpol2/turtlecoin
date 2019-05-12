@@ -140,7 +140,7 @@ else()
 endif()
 
 # Add the dependencies we need
-target_link_libraries(Common __filesystem)
+target_link_libraries(Common __filesystem gtest_main)
 target_link_libraries(CryptoNoteCore Common Logging Crypto P2P Rpc Http Serialization System sqlite3 ${Boost_LIBRARIES})
 target_link_libraries(cryptotest Crypto Common)
 target_link_libraries(Errors Crypto SubWallets Utilities)
