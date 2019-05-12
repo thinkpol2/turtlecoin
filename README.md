@@ -199,9 +199,9 @@ After following the build steps above:
 - `cmake ..`
 - `make turtlecoin_test`
 
-The test binary will be in the `src/test` directory when building completes. Run the file to run the tests and view the test report:
+The test binary will be in the `src` directory when building completes. Run the file to run the tests and view the test report:
 
-- `./test/turtlecoin_test`
+- `./turtlecoin_test`
 
 #### Thanks
 Cryptonote Developers, Bytecoin Developers, Monero Developers, Forknote Project, TurtleCoin Community
