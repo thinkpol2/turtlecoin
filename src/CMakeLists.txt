@@ -1,6 +1,9 @@
 # Build statically
 add_definitions(-DSTATICLIB)
 
+# enable googletest
+enable_testing()
+
 # Add external libraries as include dirs, so we can do #include "httplib" for example
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/cpp-linenoise)
@@ -140,7 +143,7 @@ else()
 endif()
 
 # Add the dependencies we need
-target_link_libraries(Common __filesystem gtest_main)
+target_link_libraries(Common __filesystem)
 target_link_libraries(CryptoNoteCore Common Logging Crypto P2P Rpc Http Serialization System sqlite3 ${Boost_LIBRARIES})
 target_link_libraries(cryptotest Crypto Common)
 target_link_libraries(Errors Crypto SubWallets Utilities)
@@ -199,5 +202,4 @@ add_custom_target(pool DEPENDS TurtleCoind WalletService)
 add_custom_target(solominer DEPENDS TurtleCoind zedwallet miner)
 add_custom_target(cli DEPENDS TurtleCoind zedwallet)
 
-enable_testing()
 add_test(NAME test COMMAND turtlecoin_test)

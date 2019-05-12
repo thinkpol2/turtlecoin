@@ -3,7 +3,7 @@
 #include <string>
 #include <exception>
 
-#include "StringTools.h"
+#include <Common/StringTools.h>
 
 TEST(StringUtilsTest, AsStringConvertsBinaryBufferToString) {
   uint8_t binaries[] = {84, 82, 84, 76, 112, 111, 119, 101, 114};
